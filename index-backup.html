@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Java Modernization Lab Guide | IBM Bob</title>
+  <meta name="description" content="Comprehensive Carbon-based UI lab guide for Java modernization using IBM Bob and the payment-app sample application.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cds-interactive-01: #0f62fe;
+      --cds-interactive-02: #6f6f6f;
+      --cds-interactive-03: #0f62fe;
+      --cds-ui-01: #fff;
+      --cds-ui-02: #f4f4f4;
+      --cds-ui-03: #fff;
+      --cds-ui-04: #161616;
+      --cds-ui-05: #161616;
+      --cds-text-01: #161616;
+      --cds-text-02: #525252;
+      --cds-text-03: #a8a8a8;
+      --cds-text-04: #c6c6c6;
+      --cds-text-05: #f4f4f4;
+      --cds-support-01: #da1e28;
+      --cds-support-02: #198038;
+      --cds-support-03: #f1c21b;
+      --cds-support-04: #0f62fe;
+      --cds-inverse-01: #161616;
+      --cds-inverse-02: #393939;
+      --cds-inverse-text: #fff;
+      --spacing-xs: .125rem;
+      --spacing-sm: .5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2rem;
+      --spacing-2xl: 3rem;
+      --primary-color: #0f62fe;
+      --primary-hover: #0353e9;
+      --secondary-color: #6f6f6f;
+      --success-color: #198038;
+      --warning-color: #f1c21b;
+      --danger-color: #da1e28;
+      --bg-color: #fff;
+      --bg-alt: #f4f4f4;
+      --text-primary: #161616;
+      --text-secondary: #525252;
+      --border-color: #e0e0e0;
+      --sidebar-width: 280px;
+      --header-height: 48px;
+      --code-bg: #f6f8fa;
+      --code-border: #d0d7de;
+      --text: #161616;
+    }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-color);
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-height);
+      background: #161616;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    }
+    .topbar__brand { display: flex; align-items: center; gap: .75rem; }
+    .menu-toggle {
+      background: none; border: none; color: #fff;
+      font-size: 1.25rem; cursor: pointer; padding: .25rem .5rem;
+      border-radius: 4px; line-height: 1;
+    }
+    .menu-toggle:hover { background: rgba(255,255,255,.1); }
+    .logo-dot {
+      width: 10px; height: 10px;
+      background: #0f62fe; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .brand-kicker {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .12em; color: #a8a8a8;
+      text-transform: uppercase;
+    }
+    .brand-title { font-size: 13px; font-weight: 500; color: #fff; }
+    .topbar__meta { display: flex; align-items: center; gap: .5rem; }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: flex;
+      padding-top: var(--header-height);
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background: #f4f4f4;
+      border-right: 1px solid var(--border-color);
+      position: fixed;
+      top: var(--header-height);
+      left: 0; bottom: 0;
+      overflow-y: auto;
+      transition: transform .2s ease;
+      z-index: 90;
+    }
+    .sidebar__title {
+      padding: 1rem;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .sidebar__nav { display: flex; flex-direction: column; padding: .5rem 0; }
+    .sidebar__link {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .6rem 1rem;
+      text-decoration: none; color: var(--text-secondary);
+      font-size: 13px; font-weight: 400;
+      border-left: 3px solid transparent;
+      transition: all .15s;
+    }
+    .sidebar__link:hover { background: #e8e8e8; color: var(--text-primary); }
+    .sidebar__link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      background: #e8f0fe; font-weight: 500;
+    }
+    .sidebar__num {
+      font-size: 11px; font-weight: 600; color: var(--text-secondary);
+      font-family: 'IBM Plex Mono', monospace; min-width: 22px;
+    }
+    .sidebar__sublink {
+      display: block; padding: .4rem 1rem .4rem 2.75rem;
+      text-decoration: none; color: var(--text-secondary);
+      font-size: 12px; border-left: 3px solid transparent;
+      transition: all .15s;
+    }
+    .sidebar__sublink:hover { background: #e8e8e8; color: var(--text-primary); }
+
+    /* ── CONTENT ── */
+    .content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 2rem;
+      max-width: 960px;
+    }
+
+    /* ── SECTION ── */
+    .section { padding: 2rem 0; border-bottom: 1px solid var(--border-color); }
+    .section:last-child { border-bottom: none; }
+    .section-header { margin-bottom: 1.5rem; }
+    .section-kicker {
+      font-size: 11px; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--primary-color);
+      margin-bottom: .25rem;
+    }
+    .section-header h2 {
+      font-size: 1.75rem; font-weight: 600;
+      color: var(--text-primary); margin-bottom: .75rem;
+    }
+    .section-lead {
+      font-size: 15px; color: var(--text-secondary);
+      max-width: 720px; line-height: 1.7;
+      margin-bottom: .75rem;
+    }
+
+    /* ── GRID ── */
+    .grid { display: grid; gap: 1rem; }
+    .grid--3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+    /* ── FEATURE CARDS ── */
+    .feature-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 4px; padding: 1.25rem;
+    }
+    .feature-card h3 {
+      font-size: 14px; font-weight: 600;
+      margin-bottom: .5rem; color: var(--text-primary);
+    }
+    .feature-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ── DOWNLOAD CARD ── */
+    .download-card {
+      background: #e8f0fe;
+      border: 1px solid #b3c8fd;
+      border-radius: 4px; padding: 1.25rem;
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 1rem;
+      flex-wrap: wrap; margin-bottom: 1rem;
+    }
+    .download-card h3 { font-size: 14px; font-weight: 600; margin-bottom: .25rem; }
+    .download-card p { font-size: 13px; color: var(--text-secondary); }
+
+    /* ── MINI GRID ── */
+    .mini-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; }
+    .mini-card {
+      background: var(--bg-alt); border: 1px solid var(--border-color);
+      border-radius: 4px; padding: 1rem;
+    }
+    .mini-card h4 { font-size: 13px; font-weight: 600; margin-bottom: .5rem; }
+    .mini-card ul, .mini-card ol { padding-left: 1.2rem; }
+    .mini-card li { font-size: 13px; color: var(--text-secondary); margin-bottom: .25rem; }
+    .mini-card code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; background: #e0e0e0;
+      padding: 1px 4px; border-radius: 3px;
+    }
+
+    /* ── ACCORDION ── */
+    .accordion-group { display: flex; flex-direction: column; gap: .5rem; }
+    .accordion {
+      border: 1px solid var(--border-color);
+      border-radius: 4px; overflow: hidden;
+    }
+    .accordion summary {
+      padding: .75rem 1rem; font-size: 14px; font-weight: 500;
+      cursor: pointer; background: var(--bg-alt);
+      list-style: none; display: flex;
+      align-items: center; justify-content: space-between;
+    }
+    .accordion summary::-webkit-details-marker { display: none; }
+    .accordion summary::after { content: '+'; font-size: 1.1rem; color: var(--primary-color); }
+    .accordion[open] summary::after { content: '−'; }
+    .accordion__body { padding: 1rem; background: #fff; }
+    .accordion__body p { font-size: 13px; color: var(--text-secondary); margin-bottom: .75rem; }
+    .accordion__body ol, .accordion__body ul { padding-left: 1.2rem; }
+    .accordion__body li { font-size: 13px; color: var(--text-secondary); margin-bottom: .3rem; }
+    .accordion__body code {
+      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      background: #e0e0e0; padding: 1px 4px; border-radius: 3px;
+    }
+
+    /* ── CHECKLIST ── */
+    .checklist { list-style: none; padding: 0; }
+    .checklist li {
+      padding: .3rem 0 .3rem 1.5rem; position: relative;
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .checklist li::before {
+      content: '✓'; position: absolute; left: 0;
+      color: var(--success-color); font-weight: 700;
+    }
+
+    /* ── PROMPT CARD ── */
+    .prompt-card {
+      border: 1px solid var(--code-border);
+      border-radius: 6px; overflow: hidden; margin: .75rem 0;
+    }
+    .prompt-card__header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .5rem .75rem;
+      background: #f0f3f6;
+      border-bottom: 1px solid var(--code-border);
+    }
+    .prompt-card__title { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+    .copy-btn {
+      font-size: 11px; font-weight: 600; padding: .2rem .6rem;
+      background: #fff; border: 1px solid var(--code-border);
+      border-radius: 4px; cursor: pointer; color: var(--text-secondary);
+      transition: all .15s;
+    }
+    .copy-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+    .copy-btn.copied { background: var(--success-color); color: #fff; border-color: var(--success-color); }
+    .prompt-body {
+      padding: .75rem; font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; line-height: 1.6; white-space: pre-wrap;
+      background: var(--code-bg); color: var(--text-primary);
+      overflow-x: auto;
+    }
+
+    /* ── OUTPUT PANEL ── */
+    .output-panel {
+      background: #f0f8f1; border: 1px solid #b5d5bc;
+      border-radius: 4px; padding: 1rem; margin: .75rem 0;
+    }
+    .output-panel h4 { font-size: 13px; font-weight: 600; margin-bottom: .5rem; color: #198038; }
+    .output-panel ul { padding-left: 1.2rem; }
+    .output-panel li { font-size: 13px; color: var(--text-secondary); margin-bottom: .25rem; }
+    .output-panel p { font-size: 13px; color: var(--text-secondary); }
+    .output-panel code {
+      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      background: #d4ebd8; padding: 1px 4px; border-radius: 3px;
+    }
+
+    /* ── CALLOUT ── */
+    .callout {
+      border-radius: 4px; padding: 1rem;
+      border-left: 4px solid; margin: 1rem 0;
+    }
+    .callout--info { background: #eaf0ff; border-color: var(--primary-color); }
+    .callout--success { background: #f0f8f1; border-color: var(--success-color); }
+    .callout--warning { background: #fdf6e3; border-color: var(--warning-color); }
+    .callout__label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text-secondary); margin-bottom: .25rem;
+    }
+    .callout p { font-size: 13px; color: var(--text-secondary); }
+    .callout code {
+      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      background: rgba(0,0,0,.06); padding: 1px 5px; border-radius: 3px;
+    }
+    .callout pre {
+      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      background: rgba(0,0,0,.06); padding: .5rem .75rem;
+      border-radius: 4px; margin: .5rem 0; white-space: pre-wrap;
+    }
+    .callout pre code { background: none; padding: 0; }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-block; padding: .2rem .6rem;
+      font-size: 11px; font-weight: 600; border-radius: 20px;
+      background: #e8f0fe; color: var(--primary-color);
+      letter-spacing: .05em; margin-left: .25rem;
+    }
+
+    /* ── SUBSECTION ── */
+    .subsection { margin-top: 1.5rem; }
+    .subsection__header {
+      display: flex; align-items: center; gap: .5rem;
+      margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .subsection__header h3 { font-size: 1.25rem; font-weight: 600; }
+
+    /* ── QUESTION LIST ── */
+    .question-list { display: flex; flex-direction: column; gap: 1rem; margin: 1rem 0; }
+    .question-item__title {
+      font-size: 11px; font-weight: 600; color: var(--text-secondary);
+      text-transform: uppercase; letter-spacing: .1em; margin-bottom: .3rem;
+    }
+
+    /* ── TIP BOX ── */
+    .tip-box {
+      background: #fdf6e3; border: 1px solid #f1c21b;
+      border-radius: 4px; padding: 1rem; margin: .75rem 0;
+      font-size: 13px; color: var(--text-secondary);
+    }
+    .tip-box code {
+      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      background: rgba(0,0,0,.06); padding: 1px 4px; border-radius: 3px;
+    }
+
+    /* ── MIGRATION GRID ── */
+    .migration-grid { display: flex; flex-direction: column; gap: 1.5rem; margin: 1rem 0; }
+    .migration-card {
+      border: 1px solid var(--border-color);
+      border-radius: 6px; padding: 1.25rem;
+      background: var(--bg-color);
+    }
+    .migration-card h3 { font-size: 15px; font-weight: 600; margin-bottom: .75rem; }
+    .migration-card .section-lead { font-size: 13px; }
+
+    /* ── BUSINESS VALUE ── */
+    .business-value-section {
+      margin-top: 2rem; border-top: 2px solid var(--border-color); padding-top: 1.5rem;
+    }
+    .business-value-title {
+      font-size: 16px; font-weight: 600; margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+    .business-value-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+      gap: 1rem; margin-bottom: 1rem;
+    }
+    .business-value-card {
+      border-radius: 6px; padding: 1.25rem;
+      border: 1px solid var(--border-color);
+    }
+    .business-value-card--traditional { background: #fff5f5; border-color: #f5c2c7; }
+    .business-value-card--bob { background: #f0f8f1; border-color: #b5d5bc; }
+    .business-value-card__header {
+      display: flex; align-items: center; gap: .5rem; margin-bottom: .75rem;
+    }
+    .business-value-icon {
+      width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+    }
+    .business-value-card--traditional .business-value-icon { background: #da1e28; }
+    .business-value-card--bob .business-value-icon { background: #198038; }
+    .business-value-card h5 { font-size: 13px; font-weight: 600; }
+    .business-value-list { list-style: none; padding: 0; }
+    .business-value-list li {
+      font-size: 13px; color: var(--text-secondary);
+      padding: .25rem 0; border-bottom: 1px solid rgba(0,0,0,.05);
+    }
+    .business-value-list li:last-child { border-bottom: none; }
+    .business-value-summary {
+      background: #161616; color: #fff;
+      border-radius: 4px; padding: 1rem;
+      font-size: 13px; line-height: 1.6;
+    }
+
+    /* ── CODE COMPARISON ── */
+    .java17-showcase-section { margin-top: 2rem; }
+    .showcase-title { font-size: 18px; font-weight: 600; margin-bottom: .5rem; }
+    .showcase-intro { font-size: 13px; color: var(--text-secondary); margin-bottom: 1.5rem; }
+    .code-comparison {
+      border: 1px solid var(--border-color); border-radius: 6px;
+      overflow: hidden; margin-bottom: 1.5rem;
+    }
+    .code-comparison__header {
+      padding: 1rem; background: var(--bg-alt);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .code-comparison__header h4 { font-size: 14px; font-weight: 600; margin-bottom: .25rem; }
+    .code-comparison__header p { font-size: 12px; color: var(--text-secondary); }
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+    }
+    .code-panel { display: flex; flex-direction: column; }
+    .code-panel--java11 { border-right: 1px solid var(--border-color); }
+    .code-panel__header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: .5rem .75rem; background: #f0f3f6;
+      border-bottom: 1px solid var(--border-color); gap: .5rem; flex-wrap: wrap;
+    }
+    .code-panel__header-content { display: flex; flex-direction: column; gap: .15rem; }
+    .code-panel__title { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+    .code-panel__filepath {
+      font-size: 10px; font-family: 'IBM Plex Mono', monospace;
+      color: var(--text-secondary); opacity: .7;
+    }
+    .code-badge {
+      font-size: 10px; font-weight: 700; padding: .15rem .5rem;
+      border-radius: 3px; white-space: nowrap;
+    }
+    .code-badge--java11 { background: #f5c2c7; color: #da1e28; }
+    .code-badge--java17 { background: #b5d5bc; color: #198038; }
+    .code-panel__content {
+      padding: .75rem; background: var(--code-bg);
+      overflow-x: auto; flex: 1;
+    }
+    .code-panel__content pre { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; line-height: 1.55; }
+    .code-panel__content code { font-family: inherit; }
+    .code-panel__content span { display: block; }
+    .code-panel__metrics {
+      display: flex; flex-wrap: wrap; gap: .5rem;
+      padding: .5rem .75rem; background: #f0f3f6;
+      border-top: 1px solid var(--border-color);
+    }
+    .metric { font-size: 11px; color: var(--text-secondary); }
+    .metric.improvement { color: var(--success-color); font-weight: 600; }
+    .showcase-summary {
+      background: #161616; color: #fff;
+      border-radius: 4px; padding: 1rem;
+      font-size: 13px; margin-top: .5rem;
+    }
+
+    /* ── HERO ── */
+    .hero { padding-top: 1rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+      .comparison-grid { grid-template-columns: 1fr; }
+      .code-panel--java11 { border-right: none; border-bottom: 1px solid var(--border-color); }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__brand">
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">☰</button>
+      <div class="logo-dot" aria-hidden="true"></div>
+      <div>
+        <div class="brand-kicker">IBM BOB — JAVA MODERNIZATION LAB</div>
+        <h1 class="brand-title">Payment App Modernization Walkthrough</h1>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__title">Lab Sections</div>
+      <nav class="sidebar__nav" aria-label="Table of contents">
+        <a class="sidebar__link active" href="#getting-started">
+          <span class="sidebar__num">01</span>
+          <span>Getting Started</span>
+        </a>
+        <a class="sidebar__sublink" href="#what-youll-experience">1.1 What You'll Experience</a>
+        <a class="sidebar__sublink" href="#download-materials">1.2 Download Repository Materials</a>
+        <a class="sidebar__sublink" href="#prerequisites">1.3 Prerequisites</a>
+        <a class="sidebar__link" href="#lab-use-cases">
+          <span class="sidebar__num">02</span>
+          <span>Lab Use Cases</span>
+        </a>
+        <a class="sidebar__sublink" href="#code-understanding-documentation">2.1 Code Understanding & Documentation</a>
+        <a class="sidebar__sublink" href="#java-migration">2.2 Java 11 to Java 17 Modernization</a>
+        <a class="sidebar__sublink" href="#create-frontend">2.3 Create Frontend to Showcase</a>
+        <a class="sidebar__sublink" href="#end-to-end-testing">2.4 Let Bob Test End-to-End</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+
+      <!-- SECTION 1: OVERVIEW -->
+      <section class="hero section" id="overview">
+        <div class="section-header">
+          <div class="section-kicker">Overview</div>
+          <h2 id="what-youll-experience">What You'll Experience</h2>
+          <p class="section-lead">
+            This walkthrough demonstrates Bob's capabilities for Java modernization using the <strong>payment-app</strong> sample application. You'll learn how to understand an unfamiliar codebase, generate comprehensive documentation, modernize from Java 11 to Java 17, create a React-based frontend interface, and execute end-to-end testing.
+          </p>
+        </div>
+        <div class="grid grid--3">
+          <article class="feature-card">
+            <h3>Code Understanding & Documentation</h3>
+            <p>Use Ask mode to inspect the payment application and Orchestrator mode to generate comprehensive documentation including business purpose, technology stack, architecture, and setup instructions.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Java 11 to Java 17 Modernization</h3>
+            <p>Use Bob to create a Java 11 to Java 17 modernization plan and execute the modernization workflow with detailed analysis and implementation steps.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Frontend Creation & Testing</h3>
+            <p>Create a modern React-based frontend interface for the modernized application, then let Bob create and execute comprehensive end-to-end test plans.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- SECTION 2: DOWNLOAD -->
+      <section class="section" id="download-materials">
+        <div class="section-header">
+          <div class="section-kicker">Setup</div>
+          <h2 id="download-repository-materials">Download Repository Materials</h2>
+          <p class="section-lead">
+            Download the repository bundle that contains the <strong>payment-app</strong> codebase and the Java/Maven setup scripts.
+          </p>
+        </div>
+
+        <div class="download-card">
+          <div>
+            <h3>Repository bundle</h3>
+            <p>This placeholder is reserved for the Box folder link that will be added later. The package should include the application source and the installation helper scripts from the lab assets.</p>
+          </div>
+          <a href="../sample-code/Java-Modernization-Repo.zip"
+             download
+             aria-label="Download Java Modernization Repository"
+             style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #0f62fe; color: white; text-decoration: none; border-radius: 4px; font-weight: 500; transition: background 0.2s; white-space: nowrap;"
+             onmouseover="this.style.background='#0353e9'"
+             onmouseout="this.style.background='#0f62fe'">
+            Download Java-Modernization-Repo
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
+        </div>
+
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Expected contents</h4>
+            <ul>
+              <li><code>payment-app/</code></li>
+              <li><code>java-maven-install-shell-scripts/setup-java-maven-user.sh</code></li>
+              <li><code>java-maven-install-shell-scripts/setup-java-maven-user.bat</code></li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Recommended workflow</h4>
+            <ol>
+              <li>Download the materials</li>
+              <li>Install Java and Maven if needed</li>
+              <li>Open Bob IDE and load <code>payment-app</code></li>
+            </ol>
+          </div>
+        </div>
+        <!-- Prerequisites Subsection -->
+        <div style="margin-top: 3rem;">
+          <h3 id="prerequisites" style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">Prerequisites</h3>
+          <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Before starting the lab, make sure your workstation has Java, Maven, and Bob IDE ready. The included shell and batch scripts simplify the installation and user-level environment setup.
+          </p>
+        </div>
+
+        <div class="accordion-group">
+          <details class="accordion" open>
+            <summary>Required software and environment</summary>
+            <div class="accordion__body">
+              <ul class="checklist">
+                <li>Bob IDE installed and accessible</li>
+                <li>Java 17 or later</li>
+                <li>Maven 3.6 or later installed and available on the command line</li>
+                <li>Internet access for dependency downloads</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="accordion">
+            <summary>Install Java and Maven using the helper scripts</summary>
+            <div class="accordion__body">
+              <p>After downloading the repository materials, run the matching helper script for your operating system. These scripts are located in the <code>java-maven-install-shell-scripts/</code> folder.</p>
+
+              <div class="prompt-card">
+                <div class="prompt-card__header">
+                  <span class="prompt-card__title">macOS / Linux script</span>
+                  <button class="copy-btn" data-copy-target="prompt-shell">Copy</button>
+                </div>
+                <pre class="prompt-body" id="prompt-shell">chmod +x java-maven-install-shell-scripts/setup-java-maven-user.sh
+
+./java-maven-install-shell-scripts/setup-java-maven-user.sh</pre>
+              </div>
+
+              <div class="prompt-card">
+                <div class="prompt-card__header">
+                  <span class="prompt-card__title">Windows script</span>
+                  <button class="copy-btn" data-copy-target="prompt-bat">Copy</button>
+                </div>
+                <pre class="prompt-body" id="prompt-bat">java-maven-install-shell-scripts\setup-java-maven-user.bat</pre>
+              </div>
+
+              <p>Once the script completes, open a new terminal and confirm the installation:</p>
+
+              <div class="prompt-card">
+                <div class="prompt-card__header">
+                  <span class="prompt-card__title">Verify toolchain</span>
+                  <button class="copy-btn" data-copy-target="prompt-verify">Copy</button>
+                </div>
+                <pre class="prompt-body" id="prompt-verify">java -version
+mvn -version</pre>
+              </div>
+            </div>
+          </details>
+
+          <details class="accordion">
+            <summary>Open the project in Bob IDE</summary>
+            <div class="accordion__body">
+              <ol>
+                <li>Open Bob IDE.</li>
+                <li>Select <strong>File → Open Folder</strong>.</li>
+                <li>Choose the <code>payment-app</code> directory.</li>
+                <li>Wait for the project tree to load, then begin the guided prompts below.</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- SECTION 2: LAB USE CASES -->
+      <section class="section" id="lab-use-cases">
+        <div class="section-header">
+          <div class="section-kicker">Hands-on Lab</div>
+          <h2>Lab Use Cases</h2>
+          <p class="section-lead">
+            This section demonstrates how Bob can accelerate early-stage engineering work on an existing Java application: understanding the system, answering repository questions, and helping the user run the application.
+          </p>
+        </div>
+
+        <!-- 2.1 CODE UNDERSTANDING & DOCUMENTATION -->
+        <article class="subsection" id="code-understanding-documentation">
+          <div class="subsection__header">
+            <h3>2.1 Code Understanding & Documentation</h3>
+            <span class="badge">Ask mode & Orchestrator mode</span>
+          </div>
+
+          <div class="callout callout--info" style="margin-top: 1rem;">
+            <div class="callout__label">💬 Recommended Mode</div>
+            <p style="margin: 0.5rem 0 0; font-weight: 500;">Switch to <strong>Ask mode</strong> for this section to explore and understand the codebase through natural language questions.</p>
+          </div>
+
+          <p style="font-size:13px; color:var(--text-secondary); margin:.75rem 0;">
+            In this section, you will use Bob to inspect the payment application and generate a high-level understanding of what the system does. This is especially useful when onboarding to an unfamiliar repository, preparing for modernization, or creating a fast architecture briefing for a team.
+          </p>
+          <p style="font-size:13px; color:var(--text-secondary); margin:.75rem 0;">
+            Bob should be able to identify the application's business purpose, key capabilities, technology stack, major backend layers, and the relationship between REST controllers, service layer, persistence layer, in-memory database, and operational endpoints.
+          </p>
+
+          <div class="prompt-card">
+            <div class="prompt-card__header">
+              <span class="prompt-card__title">Prompt to Bob</span>
+              <button class="copy-btn" data-copy-target="prompt-understanding">Copy</button>
+            </div>
+            <pre class="prompt-body" id="prompt-understanding">What is this payment-app application about? Explain with architecture Diagram</pre>
+          </div>
+
+          <div class="output-panel">
+            <h4>Expected outcome</h4>
+            <ul>
+              <li>Application purpose</li>
+              <li>Key features such as authorize, capture, refund, and transaction history</li>
+              <li>A high-level architecture diagram</li>
+              <li>Technology stack including Spring Boot, JPA, H2, Caffeine cache, and Prometheus metrics</li>
+            </ul>
+          </div>
+
+          <h4 id="chat-with-codebase" style="margin-top: 2rem; font-size:14px; font-weight:600;">Chat with the codebase</h4>
+          <span class="badge">Ask mode</span>
+          <p style="font-size:13px; color:var(--text-secondary); margin:.75rem 0;">
+            Continue the conversation with targeted questions about controllers, services, configuration, and runtime behavior.
+          </p>
+
+          <div class="question-list">
+            <div class="question-item">
+              <div class="question-item__title">Question 1</div>
+              <div class="prompt-card">
+                <div class="prompt-card__header">
+                  <span class="prompt-card__title">Database and persistence</span>
+                  <button class="copy-btn" data-copy-target="q1">Copy</button>
+                </div>
+                <pre class="prompt-body" id="q1">Are there any databases used in this application? Explain what database is configured, how data is stored, and whether it is persistent or in-memory.</pre>
+              </div>
+            </div>
+            <div class="question-item">
+              <div class="question-item__title">Question 2</div>
+              <div class="prompt-card">
+                <div class="prompt-card__header">
+                  <span class="prompt-card__title">API flow</span>
+                  <button class="copy-btn" data-copy-target="q2">Copy</button>
+                </div>
+                <pre class="prompt-body" id="q2">Explain the end-to-end payment flow for authorize, capture, and refund. Which controllers, services, models, and repository methods are involved?</pre>
+              </div>
+            </div>
+            <div class="question-item">
+              <div class="question-item__title">Question 3</div>
+              <div class="prompt-card">
+                <div class="prompt-card__header">
+                  <span class="prompt-card__title">Observability and performance</span>
+                  <button class="copy-btn" data-copy-target="q3">Copy</button>
+                </div>
+                <pre class="prompt-body" id="q3">What observability and performance-related features are already present in this application? Include caching, health endpoints, metrics, and any simulated processing logic.</pre>
+              </div>
+            </div>
+            <div class="question-item">
+              <div class="question-item__title">Question 4</div>
+              <div class="prompt-card">
+                <div class="prompt-card__header">
+                  <span class="prompt-card__title">Modernization readiness</span>
+                  <button class="copy-btn" data-copy-target="q5">Copy</button>
+                </div>
+                <pre class="prompt-body" id="q5">If we wanted to modernize this application, what parts of the current codebase are easiest to upgrade first, and what technical risks should we watch for?</pre>
+              </div>
+            </div>
+          </div>
+
+          <h4 style="margin-top: 2rem; font-size:14px; font-weight:600;">Run the application</h4>
+          <span class="badge">Advance or Orchestrator</span>
+          <p style="font-size:13px; color:var(--text-secondary); margin:.75rem 0;">
+            Before moving on, ask Bob to help run the application locally and explain how to use it as an end user or evaluator.
+          </p>
+
+          <div class="prompt-card">
+            <div class="prompt-card__header">
+              <span class="prompt-card__title">Runtime assistance prompt</span>
+              <button class="copy-btn" data-copy-target="prompt-run">Copy</button>
+            </div>
+            <pre class="prompt-body" id="prompt-run">Can you run this application for me on my local machine &amp; tell me how to use it?</pre>
+          </div>
+
+          <div class="output-panel">
+            <h4>What Bob should help with</h4>
+            <ul>
+              <li>Running <code>mvn spring-boot:run</code> from the project root</li>
+              <li>Confirming the default port is <code>8080</code></li>
+              <li>Explaining the payment form</li>
+              <li>Describing how to authorize a payment, review history, and test capture/refund flows</li>
+            </ul>
+          </div>
+
+          <h4 style="margin-top: 2rem; font-size:14px; font-weight:600;">Verify application startup</h4>
+          <span class="badge">Advance or Orchestrator</span>
+          <p style="font-size:13px; color:var(--text-secondary); margin:.75rem 0;">
+            After starting the application, verify that all endpoints are functioning correctly by testing the API with curl commands.
+          </p>
+
+          <div class="prompt-card">
+            <div class="prompt-card__header">
+              <span class="prompt-card__title">API verification prompt</span>
+              <button class="copy-btn" data-copy-target="prompt-verify">Copy</button>
+            </div>
+            <pre class="prompt-body" id="prompt-verify">Please create a markdown file documenting 4 sample curl commands to verify the application has started successfully. Include commands for health check, transaction history, payment authorization, and cache management. Execute each curl command to confirm the endpoints are responding correctly.</pre>
+          </div>
+
+          <div class="output-panel">
+            <h4>What Bob should help with</h4>
+            <ul>
+              <li>Creating a comprehensive <code>API_TEST_COMMANDS.md</code> file with sample curl commands</li>
+              <li>Testing the health check endpoint (<code>/actuator/health</code>)</li>
+              <li>Verifying payment API endpoints (<code>/api/payments/*</code>)</li>
+              <li>Confirming admin endpoints (<code>/admin/cache/clear</code>)</li>
+              <li>Validating that all responses match expected formats</li>
+            </ul>
+          </div>
+
+          <!-- Business Value 4.1 -->
+          <div class="business-value-section">
+            <h4 class="business-value-title">Business Value</h4>
+            <div class="business-value-grid">
+              <div class="business-value-card business-value-card--traditional">
+                <div class="business-value-card__header">
+                  <span class="business-value-icon"></span>
+                  <h5>Traditional Approach</h5>
+                </div>
+                <ul class="business-value-list">
+                  <li>Manual code review and exploration</li>
+                  <li>Reading scattered documentation</li>
+                  <li>Asking team members for context</li>
+                  <li>Tracing code paths manually</li>
+                  <li><strong>Time investment:</strong> Days to weeks to understand unfamiliar codebase</li>
+                  <li><strong>Risk:</strong> Incomplete understanding, missed dependencies</li>
+                </ul>
+              </div>
+              <div class="business-value-card business-value-card--bob">
+                <div class="business-value-card__header">
+                  <span class="business-value-icon"></span>
+                  <h5>With Bob</h5>
+                </div>
+                <ul class="business-value-list">
+                  <li>Instant codebase analysis</li>
+                  <li>Architecture visualization on demand</li>
+                  <li>Natural language Q&amp;A with repository</li>
+                  <li>Automated dependency mapping</li>
+                  <li><strong>Time investment:</strong> Minutes to hours for comprehensive understanding</li>
+                  <li><strong>Benefit:</strong> Complete context, faster onboarding, reduced knowledge gaps</li>
+                </ul>
+              </div>
+            </div>
+            <div class="business-value-summary">
+              <strong>Impact:</strong> 90%+ reduction in onboarding time • Accelerated modernization planning • Improved team productivity
+            </div>
+          </div>
+          <!-- CODE DOCUMENTATION PART -->
+          <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px solid var(--border-subtle);">
+            <h4 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Code Documentation</h4>
+            <p style="font-size:13px; color:var(--text-secondary); margin:.75rem 0;">
+              In this part, you will use Orchestrator mode to generate a practical markdown document for the payment application. This shows how Bob can turn a working codebase into onboarding-ready technical documentation without requiring a manual write-up from scratch.
+            </p>
+          </div>
+
+        <div class="callout callout--success">
+          <div class="callout__label">Recommended mode</div>
+          <p>Switch to <strong>Orchestrator mode</strong> so Bob can plan the work, inspect the repository, and produce a comprehensive markdown document systematically.</p>
+        </div>
+
+        <div class="prompt-card">
+          <div class="prompt-card__header">
+            <span class="prompt-card__title">Documentation prompt</span>
+            <button class="copy-btn" data-copy-target="prompt-docs">Copy</button>
+          </div>
+          <pre class="prompt-body" id="prompt-docs">Create a documentation for this application in markdown. Include the following sections:
+
+- Business Purpose
+
+- Technology Stack
+
+- Features
+
+- High-level Architecture (with explanation)
+
+- Project Structure (folder/file breakdown)
+
+- Brief explanation of each program/module
+
+- Setup and installation instructions
+
+- Usage instructions (how to run the application)
+
+- Dependencies and requirements
+
+- Security</pre>
+        </div>
+
+        <div class="output-panel">
+          <h4>Why this is valuable</h4>
+          <ul>
+            <li>Accelerates developer onboarding</li>
+            <li>Creates reusable internal documentation from code</li>
+            <li>Supports modernization planning with a written baseline</li>
+            <li>Helps teams document applications that were never properly described</li>
+          </ul>
+        </div>
+
+        <!-- Business Value 4.2 -->
+        <div class="business-value-section">
+          <h4 class="business-value-title">Business Value</h4>
+          <div class="business-value-grid">
+            <div class="business-value-card business-value-card--traditional">
+              <div class="business-value-card__header">
+                <span class="business-value-icon"></span>
+                <h5>Traditional Approach</h5>
+              </div>
+              <ul class="business-value-list">
+                <li>Manual documentation writing</li>
+                <li>Interviewing developers for context</li>
+                <li>Keeping docs synchronized with code changes</li>
+                <li>Creating architecture diagrams manually</li>
+                <li><strong>Time investment:</strong> Hours to days per service</li>
+                <li><strong>Risk:</strong> Outdated documentation, inconsistent formats, incomplete coverage</li>
+              </ul>
+            </div>
+            <div class="business-value-card business-value-card--bob">
+              <div class="business-value-card__header">
+                <span class="business-value-icon"></span>
+                <h5>With Bob</h5>
+              </div>
+              <ul class="business-value-list">
+                <li>Automated comprehensive documentation generation</li>
+                <li>Always reflects current codebase state</li>
+                <li>Consistent structure and format</li>
+                <li>Includes architecture, setup, and usage details</li>
+                <li><strong>Time investment:</strong> Minutes per service</li>
+                <li><strong>Benefit:</strong> Up-to-date docs, standardized format, complete coverage</li>
+              </ul>
+            </div>
+          </div>
+          <div class="business-value-summary">
+            <strong>Impact:</strong> 95%+ reduction in documentation time • Always current • Improved knowledge sharing • Better onboarding experience
+          </div>
+          </div>
+        </article>
+
+      <!-- 2.2 JAVA MIGRATION -->
+      <article class="subsection" id="java-migration">
+        <div class="subsection__header">
+          <h3>2.2 Java 11 to Java 17 Modernization</h3>
+          <span class="badge">Code mode</span>
+        </div>
+        <div style="margin-top: 1rem;">
+          <p class="section-lead">
+            In this section, you'll use Bob to create a structured modernization plan and then execute the modernization work in a controlled sequence.
+          </p>
+          <p class="section-lead">
+            This app is in Java 11. Now let's see Bob's most compelling enterprise use cases: <strong>code modernization</strong>. Many organizations are running legacy Java versions across hundreds of services. Bob can analyze the codebase, identify what needs to change, and produce a structured upgrade plan — before touching a single line of code.
+          </p>
+        </div>
+
+        <div class="migration-grid">
+          <article class="migration-card">
+            <h3>Step 1 — Create the modernization action plan</h3>
+            <div class="prompt-card">
+              <div class="prompt-card__header">
+                <span class="prompt-card__title">Java modernization action plan</span>
+                <button class="copy-btn" data-copy-target="prompt-migration-plan">Copy</button>
+              </div>
+              <pre class="prompt-body" id="prompt-migration-plan">Analyze the payment application and create a detailed action plan to modernize it from Java 11 to Java 17.
+
+The plan should include:
+1. Summary of changes required (dependencies, APIs, syntax, config)
+2. List of deprecated or removed APIs that need replacing
+3. New Java 17 features that can improve the codebase (records, sealed classes, text blocks, pattern matching)
+4. Updated pom.xml changes required (Java version, Spring Boot compatibility)
+5. Estimated effort and risk for each change
+6. Recommended order of changes to minimize risk
+
+Do not make any code changes yet. Produce the plan as: JavaModernizationPlan.md</pre>
+            </div>
+
+            <div class="output-panel">
+              <h4>Expected outcome</h4>
+              <p>Bob will produce a structured JavaModernizationPlan.md — walk the audience through the breakdown: what changes are required, what new Java 17 features can be adopted, and the recommended sequence. This is the kind of analysis that would normally take a senior developer days to produce manually.</p>
+            </div>
+          </article>
+
+          <article class="migration-card">
+            <h3>Step 2 — Execute the modernization</h3>
+            <p class="section-lead">
+              Now we'll ask Bob to execute the plan. Watch it work through the codebase systematically — updating dependencies, replacing deprecated APIs, and adopting Java 17 features like records and text blocks.
+            </p>
+            <div class="prompt-card">
+              <div class="prompt-card__header">
+                <span class="prompt-card__title">Execute the modernization plan</span>
+                <button class="copy-btn" data-copy-target="prompt-migration-exec">Copy</button>
+              </div>
+              <pre class="prompt-body" id="prompt-migration-exec">Execute the JavaModernizationPlan.md — modernize the payment application from Java 11 to Java 17.
+
+Apply all changes identified in the plan:
+1. Update pom.xml — Java version to 17, Spring Boot and dependency versions
+2. Replace any deprecated or removed APIs with Java 17 equivalents
+3. Apply Java 17 features where they improve the code:
+   - Records for immutable model classes
+   - Text blocks for multi-line strings
+   - Pattern matching for instanceof checks
+   - Sealed classes where appropriate
+4. Remove Lombok if present — replace with Java records or explicit methods
+5. Verify the application still compiles and runs with: mvn spring-boot:run
+
+Output the modernized application in a new folder alongside the original:
+
+payment-app/          ← original Java 11 (do not modify)
+payment-app-java17/   ← modernized Java 17
+├── src/
+│   └── main/
+│       ├── java/com/demo/payment/
+│       │   ├── controller/
+│       │   ├── service/
+│       │   ├── model/        ← records replace verbose POJOs
+│       │   └── config/
+│       └── resources/
+│           ├── static/
+│           └── application.properties
+├── pom.xml           ← updated to Java 17 + Spring Boot 3.x
+├── Dockerfile
+└── README.md
+
+Do not run the application. I will verify it myself.</pre>
+            </div>
+
+            <div class="tip-box">
+              <strong>Important:</strong> Make sure Java 17 or later is installed before validating the modernized app. If the original application is already using port <code>8080</code>, stop it before launching the Java 17 version.
+            </div>
+          </article>
+        </div>
+
+        <div class="output-panel">
+          <h4>Expected Bob outputs</h4>
+          <ul>
+            <li><code>JavaModernizationPlan.md</code> with a structured modernization strategy</li>
+            <li><code>payment-app-java17/</code> as a new modernized project</li>
+            <li>Updated <code>pom.xml</code> aligned to Java 17 and Spring Boot 3.x</li>
+            <li>Modernized source that can adopt records, text blocks, and pattern matching where appropriate</li>
+          </ul>
+        </div>
+
+        <div class="callout callout--success">
+          <div class="callout__label">Validation</div>
+          <p>
+            To validate the modernized application, stop any previously running server first, then run <code>mvn spring-boot:run</code> inside the generated <code>payment-app-java17</code> folder.
+          </p>
+        </div>
+
+        <!-- Java 17 Showcase -->
+        <div class="java17-showcase-section">
+          <h3 class="showcase-title">Java 17 Improvements Showcase</h3>
+          <p class="showcase-intro">
+            See the dramatic difference between Java 11 and Java 17 code. These examples from the payment application demonstrate how modern Java features eliminate boilerplate and improve code clarity.
+          </p>
+
+          <!-- Example 1 -->
+          <div class="code-comparison">
+            <div class="code-comparison__header">
+              <h4>Example 1: Records Replace Verbose Model Classes</h4>
+              <p>Java 17 records eliminate 74% of boilerplate code for immutable data carriers</p>
+            </div>
+            <div class="comparison-grid code-comparison__panels">
+              <div class="code-panel code-panel--java11">
+                <div class="code-panel__header">
+                  <div class="code-panel__header-content">
+                    <span class="code-panel__title">Java 11 - Traditional Class</span>
+                    <span class="code-panel__filepath">payment-app/src/main/java/com/demo/payment/model/PaymentRequest.java</span>
+                  </div>
+                  <span class="code-badge code-badge--java11">Java 11</span>
+                </div>
+                <div class="code-panel__content">
+                  <pre><code>public class PaymentRequest {
+    @NotBlank(message = "Card number is required")
+    private String cardNumber;
+
+    @NotNull(message = "Amount is required")
+    @Positive(message = "Amount must be positive")
+    private BigDecimal amount;
+
+    @NotBlank(message = "Currency is required")
+    private String currency;
+
+    private String cvv;
+    private String expiryMonth;
+    private String expiryYear;
+    private String transactionId;
+
+    // Constructors
+    public PaymentRequest() {
+    }
+
+    // Builder pattern
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private PaymentRequest request = new PaymentRequest();
+
+        public Builder cardNumber(String cardNumber) {
+            request.cardNumber = cardNumber;
+            return this;
+        }
+
+        public Builder amount(BigDecimal amount) {
+            request.amount = amount;
+            return this;
+        }
+
+        public Builder currency(String currency) {
+            request.currency = currency;
+            return this;
+        }
+
+        public Builder cvv(String cvv) {
+            request.cvv = cvv;
+            return this;
+        }
+
+        public Builder expiryMonth(String expiryMonth) {
+            request.expiryMonth = expiryMonth;
+            return this;
+        }
+
+        public Builder expiryYear(String expiryYear) {
+            request.expiryYear = expiryYear;
+            return this;
+        }
+
+        public Builder transactionId(String transactionId) {
+            request.transactionId = transactionId;
+            return this;
+        }
+
+        public PaymentRequest build() {
+            return request;
+        }
+    }
+
+    // Getters and Setters
+    public String getCardNumber() { return cardNumber; }
+    public void setCardNumber(String cardNumber) { this.cardNumber = cardNumber; }
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal amount) { this.amount = amount; }
+    public String getCurrency() { return currency; }
+    public void setCurrency(String currency) { this.currency = currency; }
+    public String getCvv() { return cvv; }
+    public void setCvv(String cvv) { this.cvv = cvv; }
+    public String getExpiryMonth() { return expiryMonth; }
+    public void setExpiryMonth(String m) { this.expiryMonth = m; }
+    public String getExpiryYear() { return expiryYear; }
+    public void setExpiryYear(String y) { this.expiryYear = y; }
+    public String getTransactionId() { return transactionId; }
+    public void setTransactionId(String id) { this.transactionId = id; }
+}</code></pre>
+                </div>
+                <div class="code-panel__metrics">
+                  <span class="metric">Lines: <strong>138</strong></span>
+                  <span class="metric">Boilerplate: <strong>~100 lines</strong></span>
+                </div>
+              </div>
+
+              <div class="code-panel code-panel--java17">
+                <div class="code-panel__header">
+                  <div class="code-panel__header-content">
+                    <span class="code-panel__title">Java 17 - Record</span>
+                    <span class="code-panel__filepath">payment-app-java17/src/main/java/com/demo/payment/model/PaymentRequest.java</span>
+                  </div>
+                  <span class="code-badge code-badge--java17">Java 17</span>
+                </div>
+                <div class="code-panel__content">
+                  <pre><code>/**
+ * Payment request record using Java 17 features.
+ * Records provide immutability, automatic
+ * equals/hashCode/toString, and compact syntax.
+ */
+public record PaymentRequest(
+    @NotBlank(message = "Card number is required")
+    String cardNumber,
+
+    @NotNull(message = "Amount is required")
+    @Positive(message = "Amount must be positive")
+    BigDecimal amount,
+
+    @NotBlank(message = "Currency is required")
+    String currency,
+
+    String cvv,
+    String expiryMonth,
+    String expiryYear,
+    String transactionId
+) {
+    // Compact constructor for validation
+    public PaymentRequest {
+        // Validation annotations automatically applied
+        // Additional custom validation can be added here
+    }
+}</code></pre>
+                </div>
+                <div class="code-panel__metrics">
+                  <span class="metric">Lines: <strong>36</strong></span>
+                  <span class="metric improvement">Reduction: <strong>74% less code</strong></span>
+                  <span class="metric improvement">Saved: <strong>102 lines</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Example 2 -->
+          <div class="code-comparison">
+            <div class="code-comparison__header">
+              <h4>Example 2: Records with Factory Methods</h4>
+              <p>Records can include static factory methods for convenient object creation while maintaining immutability</p>
+            </div>
+            <div class="comparison-grid code-comparison__panels">
+              <div class="code-panel code-panel--java11">
+                <div class="code-panel__header">
+                  <div class="code-panel__header-content">
+                    <span class="code-panel__title">Java 11 - Traditional Class</span>
+                    <span class="code-panel__filepath">payment-app/src/main/java/com/demo/payment/model/PaymentResponse.java</span>
+                  </div>
+                  <span class="code-badge code-badge--java11">Java 11</span>
+                </div>
+                <div class="code-panel__content">
+                  <pre><code>public class PaymentResponse {
+    private String transactionId;
+    private TransactionStatus status;
+    private String authorizationCode;
+    private BigDecimal amount;
+    private String currency;
+    private String cardNumberMasked;
+    private String message;
+    private LocalDateTime timestamp;
+
+    public PaymentResponse() {}
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private PaymentResponse response = new PaymentResponse();
+
+        public Builder transactionId(String transactionId) {
+            response.transactionId = transactionId;
+            return this;
+        }
+        public Builder status(TransactionStatus status) {
+            response.status = status;
+            return this;
+        }
+        public Builder authorizationCode(String authorizationCode) {
+            response.authorizationCode = authorizationCode;
+            return this;
+        }
+        public Builder amount(BigDecimal amount) {
+            response.amount = amount;
+            return this;
+        }
+        public Builder currency(String currency) {
+            response.currency = currency;
+            return this;
+        }
+        public Builder cardNumberMasked(String cardNumberMasked) {
+            response.cardNumberMasked = cardNumberMasked;
+            return this;
+        }
+        public Builder message(String message) {
+            response.message = message;
+            return this;
+        }
+        public Builder timestamp(LocalDateTime timestamp) {
+            response.timestamp = timestamp;
+            return this;
+        }
+        public PaymentResponse build() {
+            return response;
+        }
+    }
+
+    // Getters and Setters
+    public String getTransactionId() { return transactionId; }
+    public void setTransactionId(String id) { this.transactionId = id; }
+    public TransactionStatus getStatus() { return status; }
+    public void setStatus(TransactionStatus s) { this.status = s; }
+    public String getAuthorizationCode() { return authorizationCode; }
+    public void setAuthorizationCode(String c) { this.authorizationCode = c; }
+    public BigDecimal getAmount() { return amount; }
+    public void setAmount(BigDecimal a) { this.amount = a; }
+    public String getCurrency() { return currency; }
+    public void setCurrency(String c) { this.currency = c; }
+    public String getCardNumberMasked() { return cardNumberMasked; }
+    public void setCardNumberMasked(String m) { this.cardNumberMasked = m; }
+    public String getMessage() { return message; }
+    public void setMessage(String m) { this.message = m; }
+    public LocalDateTime getTimestamp() { return timestamp; }
+    public void setTimestamp(LocalDateTime t) { this.timestamp = t; }
+}</code></pre>
+                </div>
+                <div class="code-panel__metrics">
+                  <span class="metric">Lines: <strong>136</strong></span>
+                  <span class="metric">Boilerplate: <strong>~110 lines</strong></span>
+                </div>
+              </div>
+
+              <div class="code-panel code-panel--java17">
+                <div class="code-panel__header">
+                  <div class="code-panel__header-content">
+                    <span class="code-panel__title">Java 17 - Record</span>
+                    <span class="code-panel__filepath">payment-app-java17/src/main/java/com/demo/payment/model/PaymentResponse.java</span>
+                  </div>
+                  <span class="code-badge code-badge--java17">Java 17</span>
+                </div>
+                <div class="code-panel__content">
+                  <pre><code>/**
+ * Payment response record with factory methods.
+ * Combines immutability with flexible construction.
+ */
+public record PaymentResponse(
+    String transactionId,
+    TransactionStatus status,
+    String authorizationCode,
+    BigDecimal amount,
+    String currency,
+    String cardNumberMasked,
+    String message,
+    LocalDateTime timestamp
+) {
+    // Factory method for successful payments
+    public static PaymentResponse success(
+            String transactionId,
+            String authCode,
+            BigDecimal amount,
+            String currency) {
+        return new PaymentResponse(
+            transactionId,
+            TransactionStatus.SUCCESS,
+            authCode,
+            amount,
+            currency,
+            null,
+            "Payment processed successfully",
+            LocalDateTime.now()
+        );
+    }
+
+    // Factory method for failed payments
+    public static PaymentResponse failure(
+            String transactionId,
+            String errorMessage) {
+        return new PaymentResponse(
+            transactionId,
+            TransactionStatus.FAILED,
+            null, null, null, null,
+            errorMessage,
+            LocalDateTime.now()
+        );
+    }
+}</code></pre>
+                </div>
+                <div class="code-panel__metrics">
+                  <span class="metric">Lines: <strong>48</strong></span>
+                  <span class="metric improvement">Reduction: <strong>65% less code</strong></span>
+                  <span class="metric improvement">Saved: <strong>88 lines</strong></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="showcase-summary">
+            <strong>Total Impact:</strong> 187 lines of boilerplate eliminated • Improved readability • Built-in immutability • Automatic equals/hashCode/toString
+          </div>
+        </div>
+
+        <!-- Business Value 4.3 -->
+        <div class="business-value-section">
+          <h4 class="business-value-title">Business Value</h4>
+          <div class="business-value-grid">
+            <div class="business-value-card business-value-card--traditional">
+              <div class="business-value-card__header">
+                <span class="business-value-icon"></span>
+                <h5>Traditional Approach</h5>
+              </div>
+              <ul class="business-value-list">
+                <li>Manual code analysis and dependency review</li>
+                <li>Risk assessment for each change</li>
+                <li>Incremental refactoring and testing</li>
+                <li>Multiple review cycles</li>
+                <li><strong>Time investment:</strong> Weeks to months per service</li>
+                <li><strong>Risk:</strong> Breaking changes, missed deprecations, incomplete modernizations</li>
+              </ul>
+            </div>
+            <div class="business-value-card business-value-card--bob">
+              <div class="business-value-card__header">
+                <span class="business-value-icon"></span>
+                <h5>With Bob</h5>
+              </div>
+              <ul class="business-value-list">
+                <li>Automated modernization planning and execution</li>
+                <li>Comprehensive risk identification</li>
+                <li>Modern Java feature adoption (records, pattern matching)</li>
+                <li>Validated modernization path</li>
+                <li><strong>Time investment:</strong> Hours to days per service</li>
+                <li><strong>Benefit:</strong> Faster modernization, reduced risk, modern code patterns, quality improvements</li>
+              </ul>
+            </div>
+          </div>
+          <div class="business-value-summary">
+            <strong>Impact:</strong> 90%+ reduction in modernization time • Lower risk • Modern code quality • Accelerated technical debt reduction
+            <br><br>
+            One service modernized in minutes. Now imagine doing this across 200 services.
+          </div>
+        </div>
+
+        <!-- Optional Validation -->
+        <div class="callout callout--info" style="margin-top: 2rem;">
+          <div class="callout__label">Optional Validation</div>
+          <h4 style="margin-top: 0.5rem; margin-bottom: 0.75rem; color: var(--text);"><strong>Optional:</strong> Validate the Modernized Application</h4>
+          <p style="margin-bottom: 0.75rem;">Bring up the modernized app to validate it works.</p>
+          <pre><code>cd payment-app-java17
+mvn spring-boot:run</code></pre>
+          <div class="callout callout--warning" style="margin-top: 1rem; margin-bottom: 1rem;">
+            <p style="margin: 0;"><strong>Important:</strong> Make sure you stop the previously running server first — otherwise you'll get a port conflict on <code>localhost:8080</code>. In the terminal where the original app is running, press <code>Ctrl+C</code> to stop it before starting the Java 17 version.</p>
+          </div>
+          
+          <h5 style="margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--text);">Confirm Backend Service is Running</h5>
+          <p style="margin-bottom: 0.75rem;">Once the application starts, verify the backend API is working by testing the endpoints. Open a new terminal and run:</p>
+          
+          <p style="margin-bottom: 0.5rem; font-weight: 600;">1. Check transaction history (should return empty array initially):</p>
+          <pre><code>curl http://localhost:8080/api/payments/history</code></pre>
+          <p style="margin-bottom: 0.75rem; font-size: 0.9rem; color: var(--text-secondary);">Expected response: <code>[]</code></p>
+          
+          <p style="margin-bottom: 0.5rem; font-weight: 600;">2. Test payment authorization:</p>
+          <pre><code>curl -X POST http://localhost:8080/api/payments/authorize \
+  -H "Content-Type: application/json" \
+  -d '{
+    "cardNumber": "4263970000005262",
+    "expiryMonth": "12",
+    "expiryYear": "25",
+    "cvv": "123",
+    "amount": 100.00,
+    "currency": "USD"
+  }'</code></pre>
+          <p style="margin-bottom: 0.75rem; font-size: 0.9rem; color: var(--text-secondary);">Expected response: JSON with <code>"success": true</code> and <code>"status": "AUTHORIZED"</code></p>
+          
+          <p style="margin-bottom: 0.5rem; font-weight: 600;">3. Verify the transaction was recorded:</p>
+          <pre><code>curl http://localhost:8080/api/payments/history</code></pre>
+          <p style="margin-bottom: 0.75rem; font-size: 0.9rem; color: var(--text-secondary);">Expected response: JSON array containing the transaction you just created</p>
+          
+          <p style="margin: 0.75rem 0 0; font-style: italic;">Or just ask Bob to run it and test the endpoints :)</p>
+        </div>
+      </article>
+
+      <!-- 2.3 CREATE FRONTEND TO SHOWCASE -->
+      <article class="subsection" id="create-frontend">
+        <div class="subsection__header">
+          <h3>2.3 Create Frontend to Showcase</h3>
+          <span class="badge">Code mode</span>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <p style="font-size:13px; color:var(--text-secondary); margin:.75rem 0;">
+            In this section, you'll ask Bob to create a modern React-based frontend interface for the modernized payment application. The frontend will be added to the <code>payment-app-java17/src/main/resources/static</code> directory, making it a complete Spring Boot application with an integrated UI.
+          </p>
+          <p style="font-size:13px; color:var(--text-secondary); margin:.75rem 0;">
+            <strong>Note:</strong> This step assumes you've completed section 2.2 (Java Modernization) and have the <code>payment-app-java17</code> folder ready. The frontend will be created inside this modernized application.
+          </p>
+        </div>
+
+        <div class="prompt-card" style="margin-top: 1rem;">
+          <div class="prompt-card__header">
+            <span class="prompt-card__title">Detailed Frontend Creation Prompt</span>
+            <button class="copy-btn" data-copy-target="prompt-frontend">Copy</button>
+          </div>
+          <pre class="prompt-body" id="prompt-frontend">Create a modern, responsive React-based frontend for the payment application in the payment-app-java17/src/main/resources/static directory with the following requirements:
+
+1. Technology Stack:
+   - React 18 (loaded via CDN - no build tools needed)
+   - HTML5 with semantic markup
+   - Modern CSS3 with gradient backgrounds and smooth animations
+   - Babel Standalone for JSX transformation
+
+2. File Structure (create in payment-app-java17/src/main/resources/static/):
+   ├── index.html
+   ├── app.js (React components)
+   └── styles.css
+
+3. React Components to Implement:
+   - App (main container with state management)
+   - PaymentForm (with card number formatting, validation, and test cards display)
+   - TransactionHistory (with capture/refund actions)
+
+4. Features:
+   - Payment authorization with formatted card input (XXXX XXXX XXXX XXXX)
+   - Expiry date formatting (MM/YY)
+   - CVV validation (3-4 digits)
+   - Amount validation (decimal support)
+   - Transaction history with auto-refresh every 5 seconds
+   - Capture and Refund actions for transactions
+   - Status badges (AUTHORIZED, CAPTURED, DECLINED, REFUNDED)
+   - Success/error messages with auto-dismiss
+   - Loading states and empty states
+   - Test card numbers display (Visa: 4263970000005262, MasterCard: 5425230000004415, Amex: 374101000000608)
+
+5. Styling Requirements:
+   - Purple gradient background (from #667eea to #764ba2)
+   - White cards with rounded corners and shadows
+   - Responsive design (mobile, tablet, desktop)
+   - Smooth hover effects and transitions
+   - Color-coded status badges
+   - Professional table layout for transactions
+
+6. API Integration:
+   - POST /api/payments/authorize (for payment authorization)
+   - POST /api/payments/capture (for capturing authorized payments)
+   - POST /api/payments/refund (for refunding captured payments)
+   - GET /api/payments/history (for transaction history)
+
+7. Code Quality:
+   - Clean, well-structured React components
+   - Proper state management with useState and useEffect
+   - Input validation and error handling
+   - Responsive design with media queries
+   - Accessible UI elements
+
+Create all three files (index.html, app.js, styles.css) in the payment-app-java17/src/main/resources/static directory.</pre>
+        </div>
+
+        <div class="callout callout--info" style="margin-top: 1.5rem;">
+          <div class="callout__label">📋 Key Implementation Details</div>
+          <h4 style="margin-top: 0.5rem; margin-bottom: 0.75rem; color: var(--text);">React Component Structure</h4>
+          
+          <div style="margin-top: 1rem;">
+            <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 0.5rem;">index.html - React Setup</h5>
+            <p style="font-size: 13px; margin-bottom: 0.5rem;">Load React 18 and Babel from CDN:</p>
+            <pre style="background: var(--bg-subtle); padding: 1rem; border-radius: 4px; overflow-x: auto;"><code><script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel" src="app.js"></script></code></pre>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 0.5rem;">app.js - React Components</h5>
+            <p style="font-size: 13px; margin-bottom: 0.5rem;">Three main components with hooks:</p>
+            <pre style="background: var(--bg-subtle); padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>// App component - main container with state
+function App() {
+  const [transactions, setTransactions] = useState([]);
+  const [message, setMessage] = useState(null);
+  // Auto-refresh every 5 seconds
+  useEffect(() => {
+    fetchTransactions();
+    const interval = setInterval(fetchTransactions, 5000);
+    return () => clearInterval(interval);
+  }, []);
+}
+
+// PaymentForm - handles payment submission
+// TransactionHistory - displays and manages transactions</code></pre>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <h5 style="font-size: 14px; font-weight: 600; margin-bottom: 0.5rem;">styles.css - Modern Styling</h5>
+            <p style="font-size: 13px; margin-bottom: 0.5rem;">Purple gradient theme with responsive design:</p>
+            <pre style="background: var(--bg-subtle); padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="output-panel" style="margin-top: 1.5rem;">
+          <h4>Expected Outcome</h4>
+          <ul>
+            <li>Three files created in <code>payment-app-java17/src/main/resources/static/</code>:
+              <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                <li><code>index.html</code> - React setup and root element</li>
+                <li><code>app.js</code> - React components (App, PaymentForm, TransactionHistory)</li>
+                <li><code>styles.css</code> - Modern styling with purple gradient theme</li>
+              </ul>
+            </li>
+            <li>Fully functional React-based payment interface</li>
+            <li>Responsive design that works on mobile, tablet, and desktop</li>
+            <li>Real-time transaction updates (auto-refresh every 5 seconds)</li>
+            <li>Payment form with card number formatting and validation</li>
+            <li>Transaction history with Capture/Refund actions</li>
+            <li>Professional UI with status badges and smooth animations</li>
+            <li>Test card numbers displayed for easy testing</li>
+          </ul>
+        </div>
+
+        <!-- Business Value 2.3 -->
+        <div class="business-value-section">
+          <h4 class="business-value-title">Business Value</h4>
+          <div class="business-value-grid">
+            <div class="business-value-card business-value-card--traditional">
+              <div class="business-value-card__header">
+                <span class="business-value-icon"></span>
+                <h5>Traditional Approach</h5>
+              </div>
+              <ul class="business-value-list">
+                <li>Manual frontend development from scratch</li>
+                <li>Design mockups and approval cycles</li>
+                <li>Component library selection and setup</li>
+                <li>Responsive design implementation</li>
+                <li><strong>Time investment:</strong> Days to weeks for complete frontend</li>
+                <li><strong>Risk:</strong> Inconsistent styling, accessibility issues, browser compatibility problems</li>
+              </ul>
+            </div>
+            <div class="business-value-card business-value-card--bob">
+              <div class="business-value-card__header">
+                <span class="business-value-icon"></span>
+                <h5>With Bob</h5>
+              </div>
+              <ul class="business-value-list">
+                <li>Automated frontend generation with best practices</li>
+                <li>Consistent design system implementation</li>
+                <li>Built-in accessibility and responsiveness</li>
+                <li>Production-ready code structure</li>
+                <li><strong>Time investment:</strong> Minutes to hours</li>
+                <li><strong>Benefit:</strong> Rapid prototyping, consistent quality, reduced development time</li>
+              </ul>
+            </div>
+          </div>
+          <div class="business-value-summary">
+            <strong>Impact:</strong> 85%+ reduction in frontend development time • Consistent design patterns • Improved accessibility • Faster time-to-market
+          </div>
+        </div>
+      </article>
+
+      <!-- 2.4 LET BOB TEST END-TO-END -->
+      <article class="subsection" id="end-to-end-testing">
+        <div class="subsection__header">
+          <h3>2.4 Let Bob Test End-to-End</h3>
+          <span class="badge">Orchestrator mode</span>
+        </div>
+
+        <div style="margin-top: 1rem;">
+          <p style="font-size:13px; color:var(--text-secondary); margin:.75rem 0;">
+            In this final section, you'll ask Bob to create and execute a comprehensive end-to-end test plan for the payment application. This demonstrates Bob's ability to think systematically about testing, identify edge cases, and validate the entire application stack.
+          </p>
+          <p style="font-size:13px; color:var(--text-secondary); margin:.75rem 0;">
+            Bob will develop a step-by-step test plan covering functional testing, integration testing, error handling, and performance validation.
+          </p>
+        </div>
+
+        <div class="callout callout--success" style="margin-top: 1rem;">
+          <div class="callout__label">💡 Recommended Mode</div>
+          <p style="margin: 0.5rem 0 0; font-weight: 500;">Switch to <strong>Orchestrator mode</strong> so Bob can systematically plan, execute, and document the testing process.</p>
+        </div>
+
+        <div class="prompt-card" style="margin-top: 1.5rem;">
+          <div class="prompt-card__header">
+            <span class="prompt-card__title">Test Plan Creation Prompt</span>
+            <button class="copy-btn" data-copy-target="prompt-test-plan">Copy</button>
+          </div>
+          <pre class="prompt-body" id="prompt-test-plan">Create a comprehensive end-to-end test plan for the payment application and execute it step by step.
+
+The test plan should cover:
+
+1. **Functional Testing**
+   - Payment authorization flow
+   - Payment capture flow
+   - Payment refund flow
+   - Transaction history retrieval
+   - Admin endpoints (health, metrics, cache)
+
+2. **Integration Testing**
+   - Frontend to backend communication
+   - Database persistence verification
+   - Cache behavior validation
+   - API response format verification
+
+3. **Error Handling**
+   - Invalid payment data
+   - Missing required fields
+   - Duplicate transaction IDs
+   - Network timeout scenarios
+   - Database connection failures
+
+4. **Edge Cases**
+   - Concurrent payment requests
+   - Large transaction amounts
+   - Special characters in input fields
+   - Boundary value testing
+
+5. **Performance Validation**
+   - Response time measurements
+   - Cache hit/miss ratios
+   - Memory usage monitoring
+   - Concurrent user simulation
+
+For each test:
+- Provide the test steps
+- Execute the test
+- Document the actual results
+- Compare with expected results
+- Note any issues or failures
+
+Create a detailed test report as: TestReport.md</pre>
+        </div>
+
+        <div class="prompt-card" style="margin-top: 1.5rem;">
+          <div class="prompt-card__header">
+            <span class="prompt-card__title">Test Execution Prompt</span>
+            <button class="copy-btn" data-copy-target="prompt-test-exec">Copy</button>
+          </div>
+          <pre class="prompt-body" id="prompt-test-exec">Execute the test plan you created and document the results.
+
+For each test case:
+1. Set up the test environment
+2. Execute the test steps
+3. Capture the actual results
+4. Compare with expected outcomes
+5. Document any failures or unexpected behavior
+6. Suggest fixes for any issues found
+
+Provide a summary including:
+- Total tests executed
+- Tests passed
+- Tests failed
+- Critical issues found
+- Recommendations for improvements
+
+Update the TestReport.md with complete test results.</pre>
+        </div>
+
+        <div class="output-panel" style="margin-top: 1.5rem;">
+          <h4>Expected Deliverables</h4>
+          <ul>
+            <li><code>TestReport.md</code> with comprehensive test documentation</li>
+            <li>Test execution results for all test cases</li>
+            <li>Pass/fail status for each test</li>
+            <li>Screenshots or logs of test execution</li>
+            <li>List of issues found with severity ratings</li>
+            <li>Recommendations for fixes and improvements</li>
+          </ul>
+        </div>
+
+        <div class="tip-box" style="margin-top: 1.5rem;">
+          <strong>Pro Tip:</strong> Bob can also generate automated test scripts (JUnit, Selenium, etc.) based on the test plan. Ask Bob to create automated tests if you want to integrate them into your CI/CD pipeline.
+        </div>
+
+        <!-- Business Value 2.4 -->
+        <div class="business-value-section">
+          <h4 class="business-value-title">Business Value</h4>
+          <div class="business-value-grid">
+            <div class="business-value-card business-value-card--traditional">
+              <div class="business-value-card__header">
+                <span class="business-value-icon"></span>
+                <h5>Traditional Approach</h5>
+              </div>
+              <ul class="business-value-list">
+                <li>Manual test case creation</li>
+                <li>Time-consuming test execution</li>
+                <li>Inconsistent test coverage</li>
+                <li>Manual result documentation</li>
+                <li><strong>Time investment:</strong> Days to weeks for comprehensive testing</li>
+                <li><strong>Risk:</strong> Missed edge cases, incomplete coverage, human error in execution</li>
+              </ul>
+            </div>
+            <div class="business-value-card business-value-card--bob">
+              <div class="business-value-card__header">
+                <span class="business-value-icon"></span>
+                <h5>With Bob</h5>
+              </div>
+              <ul class="business-value-list">
+                <li>Automated test plan generation</li>
+                <li>Systematic test execution</li>
+                <li>Comprehensive edge case coverage</li>
+                <li>Automated result documentation</li>
+                <li><strong>Time investment:</strong> Hours for complete testing</li>
+                <li><strong>Benefit:</strong> Higher coverage, consistent execution, detailed reporting, faster feedback</li>
+              </ul>
+            </div>
+          </div>
+          <div class="business-value-summary">
+            <strong>Impact:</strong> 90%+ reduction in testing time • Improved test coverage • Consistent quality • Faster defect detection • Better documentation
+          </div>
+        </div>
+      </article>
+
+    </main>
+  </div>
+
+  <script>
+    // ── COPY BUTTONS ──
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-copy-target');
+        const el = document.getElementById(targetId);
+        if (!el) return;
+        navigator.clipboard.writeText(el.innerText).then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+    });
+
+    // ── MOBILE SIDEBAR TOGGLE ──
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      const expanded = sidebar.classList.contains('open');
+      menuToggle.setAttribute('aria-expanded', expanded);
+    });
+
+    // ── ACTIVE SIDEBAR LINK ON SCROLL ──
+    const sections = document.querySelectorAll('section[id], article[id]');
+    const sidebarLinks = document.querySelectorAll('.sidebar__link, .sidebar__sublink');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          sidebarLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + entry.target.id) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+
+    sections.forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>
