@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security & Dependency Analysis Lab Guide | IBM Bob</title>
+  <meta name="description" content="Comprehensive Carbon-based UI lab guide for security scanning and dependency analysis using IBM Bob and IBM Concert reports.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cds-interactive-01: #0f62fe;
+      --cds-interactive-02: #6f6f6f;
+      --cds-interactive-03: #0f62fe;
+      --cds-ui-01: #fff;
+      --cds-ui-02: #f4f4f4;
+      --cds-ui-03: #fff;
+      --cds-ui-04: #161616;
+      --cds-ui-05: #161616;
+      --cds-text-01: #161616;
+      --cds-text-02: #525252;
+      --cds-text-03: #a8a8a8;
+      --cds-text-04: #c6c6c6;
+      --cds-text-05: #f4f4f4;
+      --cds-support-01: #da1e28;
+      --cds-support-02: #198038;
+      --cds-support-03: #f1c21b;
+      --cds-support-04: #0f62fe;
+      --cds-inverse-01: #161616;
+      --cds-inverse-02: #393939;
+      --cds-inverse-text: #fff;
+      --spacing-xs: .125rem;
+      --spacing-sm: .5rem;
+      --spacing-md: 1rem;
+      --spacing-lg: 1.5rem;
+      --spacing-xl: 2rem;
+      --spacing-2xl: 3rem;
+      --primary-color: #0f62fe;
+      --primary-hover: #0353e9;
+      --secondary-color: #6f6f6f;
+      --success-color: #198038;
+      --warning-color: #f1c21b;
+      --danger-color: #da1e28;
+      --bg-color: #fff;
+      --bg-alt: #f4f4f4;
+      --text-primary: #161616;
+      --text-secondary: #525252;
+      --border-color: #e0e0e0;
+      --sidebar-width: 280px;
+      --header-height: 48px;
+      --code-bg: #f6f8fa;
+      --code-border: #d0d7de;
+      --text: #161616;
+    }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-color);
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-height);
+      background: #161616;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      z-index: 100;
+      box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    }
+    .topbar__brand { display: flex; align-items: center; gap: .75rem; }
+    .menu-toggle {
+      background: none; border: none; color: #fff;
+      font-size: 1.25rem; cursor: pointer; padding: .25rem .5rem;
+      border-radius: 4px; line-height: 1;
+    }
+    .menu-toggle:hover { background: rgba(255,255,255,.1); }
+    .logo-dot {
+      width: 10px; height: 10px;
+      background: #0f62fe; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .brand-kicker {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .12em; color: #a8a8a8;
+      text-transform: uppercase;
+    }
+    .brand-title { font-size: 13px; font-weight: 500; color: #fff; }
+    .topbar__meta { display: flex; align-items: center; gap: .5rem; }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: flex;
+      padding-top: var(--header-height);
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-width);
+      flex-shrink: 0;
+      background: #f4f4f4;
+      border-right: 1px solid var(--border-color);
+      position: fixed;
+      top: var(--header-height);
+      left: 0; bottom: 0;
+      overflow-y: auto;
+      transition: transform .2s ease;
+      z-index: 90;
+    }
+    .sidebar__title {
+      padding: 1rem;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .sidebar__nav { display: flex; flex-direction: column; padding: .5rem 0; }
+    .sidebar__link {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .6rem 1rem;
+      text-decoration: none; color: var(--text-secondary);
+      font-size: 13px; font-weight: 400;
+      border-left: 3px solid transparent;
+      transition: all .15s;
+    }
+    .sidebar__link:hover { background: #e8e8e8; color: var(--text-primary); }
+    .sidebar__link.active {
+      color: var(--primary-color);
+      border-left-color: var(--primary-color);
+      background: #e8f0fe; font-weight: 500;
+    }
+    .sidebar__num {
+      font-size: 11px; font-weight: 600; color: var(--text-secondary);
+      font-family: 'IBM Plex Mono', monospace; min-width: 22px;
+    }
+    .sidebar__sublink {
+      display: block; padding: .4rem 1rem .4rem 2.75rem;
+      text-decoration: none; color: var(--text-secondary);
+      font-size: 12px; border-left: 3px solid transparent;
+      transition: all .15s;
+    }
+    .sidebar__sublink:hover { background: #e8e8e8; color: var(--text-primary); }
+
+    /* ── CONTENT ── */
+    .content {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 2rem;
+      max-width: 960px;
+    }
+
+    /* ── SECTION ── */
+    .section { padding: 2rem 0; border-bottom: 1px solid var(--border-color); }
+    .section:last-child { border-bottom: none; }
+    .section-header { margin-bottom: 1.5rem; }
+    .section-kicker {
+      font-size: 11px; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--primary-color);
+      margin-bottom: .25rem;
+    }
+    .section-header h2 {
+      font-size: 1.75rem; font-weight: 600;
+      color: var(--text-primary); margin-bottom: .75rem;
+    }
+    .section-lead {
+      font-size: 15px; color: var(--text-secondary);
+      max-width: 720px; line-height: 1.7;
+      margin-bottom: .75rem;
+    }
+
+    /* ── GRID ── */
+    .grid { display: grid; gap: 1rem; }
+    .grid--2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+
+    /* ── FEATURE CARDS ── */
+    .feature-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border-color);
+      border-radius: 4px; padding: 1.25rem;
+    }
+    .feature-card h3 {
+      font-size: 14px; font-weight: 600;
+      margin-bottom: .5rem; color: var(--text-primary);
+    }
+    .feature-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ── DOWNLOAD CARD ── */
+    .download-card {
+      background: #e8f0fe;
+      border: 1px solid #b3c8fd;
+      border-radius: 4px; padding: 1.25rem;
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 1rem;
+      flex-wrap: wrap; margin-bottom: 1rem;
+    }
+    .download-card h3 { font-size: 14px; font-weight: 600; margin-bottom: .25rem; }
+    .download-card p { font-size: 13px; color: var(--text-secondary); }
+
+    /* ── MINI GRID ── */
+    .mini-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; }
+    .mini-card {
+      background: var(--bg-alt); border: 1px solid var(--border-color);
+      border-radius: 4px; padding: 1rem;
+    }
+    .mini-card h4 { font-size: 13px; font-weight: 600; margin-bottom: .5rem; }
+    .mini-card ul, .mini-card ol { padding-left: 1.2rem; }
+    .mini-card li { font-size: 13px; color: var(--text-secondary); margin-bottom: .25rem; }
+    .mini-card code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; background: #e0e0e0;
+      padding: 1px 4px; border-radius: 3px;
+    }
+
+    /* ── PROMPT CARD ── */
+    .prompt-card {
+      border: 1px solid var(--code-border);
+      border-radius: 6px; overflow: hidden; margin: .75rem 0;
+    }
+    .prompt-card__header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .5rem .75rem;
+      background: #f0f3f6;
+      border-bottom: 1px solid var(--code-border);
+    }
+    .prompt-card__title { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+    .copy-btn {
+      font-size: 11px; font-weight: 600; padding: .2rem .6rem;
+      background: #fff; border: 1px solid var(--code-border);
+      border-radius: 4px; cursor: pointer; color: var(--text-secondary);
+      transition: all .15s;
+    }
+    .copy-btn:hover { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+    .copy-btn.copied { background: var(--success-color); color: #fff; border-color: var(--success-color); }
+    .prompt-body {
+      padding: .75rem; font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; line-height: 1.6; white-space: pre-wrap;
+      background: var(--code-bg); color: var(--text-primary);
+      overflow-x: auto;
+    }
+
+    /* ── CALLOUT ── */
+    .callout {
+      border-radius: 4px; padding: 1rem;
+      border-left: 4px solid; margin: 1rem 0;
+    }
+    .callout--info { background: #eaf0ff; border-color: var(--primary-color); }
+    .callout--success { background: #f0f8f1; border-color: var(--success-color); }
+    .callout--warning { background: #fdf6e3; border-color: var(--warning-color); }
+    .callout--danger { background: #fff5f5; border-color: var(--danger-color); }
+    .callout__label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text-secondary); margin-bottom: .25rem;
+    }
+    .callout p { font-size: 13px; color: var(--text-secondary); }
+    .callout code {
+      font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+      background: rgba(0,0,0,.06); padding: 1px 5px; border-radius: 3px;
+    }
+
+    /* ── SUBSECTION ── */
+    .subsection { margin-top: 1.5rem; }
+    .subsection__header {
+      display: flex; align-items: center; gap: .5rem;
+      margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .subsection__header h3 { font-size: 1.25rem; font-weight: 600; }
+
+    /* ── HERO ── */
+    .hero { padding-top: 1rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__brand">
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">☰</button>
+      <div class="logo-dot" aria-hidden="true"></div>
+      <div>
+        <div class="brand-kicker">IBM BOB — SECURITY & DEPENDENCY ANALYSIS LAB</div>
+        <h1 class="brand-title">Application Security & Dependency Check Walkthrough</h1>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar__title">Lab Sections</div>
+      <nav class="sidebar__nav" aria-label="Table of contents">
+        <a class="sidebar__link active" href="#getting-started">
+          <span class="sidebar__num">01</span>
+          <span>Getting Started</span>
+        </a>
+        <a class="sidebar__sublink" href="#what-youll-experience">1.1 What You'll Experience</a>
+        <a class="sidebar__sublink" href="#download-materials">1.2 Download Repository Materials</a>
+        <a class="sidebar__sublink" href="#prerequisites">1.3 Prerequisites</a>
+        <a class="sidebar__link" href="#lab-use-cases">
+          <span class="sidebar__num">02</span>
+          <span>Lab Use Cases</span>
+        </a>
+        <a class="sidebar__sublink" href="#security-scan">2.1 Quick Security Check with Bob Findings</a>
+        <a class="sidebar__sublink" href="#dependency-analysis">2.2 Dependency Vulnerability Analysis</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+
+      <!-- SECTION 1: OVERVIEW -->
+      <section class="hero section" id="overview">
+        <div class="section-header">
+          <div class="section-kicker">Overview</div>
+          <h2 id="what-youll-experience">What You'll Experience</h2>
+          <p class="section-lead">
+            This walkthrough demonstrates Bob's capabilities for security scanning and dependency analysis using the <strong>payment-app</strong> sample application. You'll learn how to identify security vulnerabilities, handle leaked API keys, analyze dependency reports from IBM Concert, and systematically fix critical security issues.
+          </p>
+        </div>
+        <div class="grid grid--2">
+          <article class="feature-card">
+            <h3>Quick Security Check with Bob Findings</h3>
+            <p>Use Bob's built-in security scanning to identify vulnerabilities in your codebase, including leaked API keys and credentials. Learn how to use Bob Findings to detect and remediate security issues efficiently.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Dependency Vulnerability Analysis</h3>
+            <p>Analyze IBM Concert dependency scan reports to identify critical vulnerabilities in your application's dependencies. Use Bob to create remediation plans and execute fixes systematically.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- SECTION 2: DOWNLOAD -->
+      <section class="section" id="download-materials">
+        <div class="section-header">
+          <div class="section-kicker">Setup</div>
+          <h2 id="download-repository-materials">Download Repository Materials</h2>
+          <p class="section-lead">
+            Download the repository bundle that contains the <strong>payment-app</strong> codebase, the Java/Maven setup scripts, and the IBM Concert dependency scan report.
+          </p>
+        </div>
+
+        <div class="download-card">
+          <div>
+            <h3>Repository bundle</h3>
+            <p>This package includes the application source, installation helper scripts, and the dependency-scan-summary.md report from IBM Concert.</p>
+          </div>
+          <a href="../sample-code/Java-Modernization-Repo.zip"
+             download
+             aria-label="Download Security Lab Repository"
+             style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #0f62fe; color: white; text-decoration: none; border-radius: 4px; font-weight: 500; transition: background 0.2s; white-space: nowrap;"
+             onmouseover="this.style.background='#0353e9'"
+             onmouseout="this.style.background='#0f62fe'">
+            Download Security-Lab-Repo
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
+        </div>
+
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>Expected contents</h4>
+            <ul>
+              <li><code>payment-app/</code></li>
+              <li><code>dependency-scan-summary.md</code></li>
+              <li><code>java-maven-install-shell-scripts/</code></li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h4>Recommended workflow</h4>
+            <ol>
+              <li>Download the materials</li>
+              <li>Install Java and Maven if needed</li>
+              <li>Open Bob IDE and load <code>payment-app</code></li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Prerequisites Subsection -->
+        <div style="margin-top: 3rem;">
+          <h3 id="prerequisites" style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">Prerequisites</h3>
+          <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Before starting the lab, make sure your workstation has Java, Maven, and Bob IDE ready. The included shell and batch scripts simplify the installation and user-level environment setup.
+          </p>
+        </div>
+
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h4>macOS / Linux</h4>
+            <ol>
+              <li>Open Terminal</li>
+              <li>Navigate to <code>java-maven-install-shell-scripts/</code></li>
+              <li>Run: <code>chmod +x setup-java-maven-user.sh</code></li>
+              <li>Run: <code>./setup-java-maven-user.sh</code></li>
+              <li>Follow the prompts</li>
+            </ol>
+          </div>
+          <div class="mini-card">
+            <h4>Windows</h4>
+            <ol>
+              <li>Open Command Prompt or PowerShell</li>
+              <li>Navigate to <code>java-maven-install-shell-scripts\</code></li>
+              <li>Run: <code>setup-java-maven-user.bat</code></li>
+              <li>Follow the prompts</li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="callout callout--info" style="margin-top: 1rem;">
+          <div class="callout__label">Note</div>
+          <p>The setup scripts will install Java 17 and Maven 3.9+ in your user directory without requiring administrator privileges. After installation, restart your terminal or IDE to ensure the environment variables are loaded.</p>
+        </div>
+      </section>
+
+      <!-- SECTION 3: LAB USE CASES -->
+      <section class="section" id="lab-use-cases">
+        <div class="section-header">
+          <div class="section-kicker">Lab Exercises</div>
+          <h2>Lab Use Cases</h2>
+          <p class="section-lead">
+            Complete these hands-on exercises to learn how Bob can help you identify and fix security vulnerabilities and dependency issues in your applications.
+          </p>
+        </div>
+
+        <!-- USE CASE 1: SECURITY SCAN -->
+        <div class="subsection" id="security-scan">
+          <div class="subsection__header">
+            <h3>Use Case 1: Quick Security Check with Bob Findings</h3>
+          </div>
+          
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            In this exercise, you'll use Bob's built-in security scanning capabilities to identify leaked API keys and credentials in the payment-app codebase. Bob Findings provides real-time security analysis and helps you remediate issues quickly.
+          </p>
+
+          <div class="callout callout--danger">
+            <div class="callout__label">Security Alert</div>
+            <p>The payment-app contains hardcoded API credentials in <code>PaymentService.java</code>. This is a critical security vulnerability that must be addressed immediately.</p>
+          </div>
+
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 1: Open Bob Findings</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Bob Findings automatically scans your codebase for security issues. To access it:
+          </p>
+          <ol style="padding-left: 1.5rem; margin-bottom: 1rem;">
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Open the payment-app project in Bob IDE</li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Look for the "Findings" panel (usually in the left sidebar or bottom panel)</li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Bob will automatically scan the codebase and display security findings</li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Look for findings related to "Hardcoded Credentials" or "Leaked API Keys"</li>
+          </ol>
+
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 2: Review the Security Finding</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Bob Findings will identify the hardcoded credentials in <code>PaymentService.java</code>. Click on the finding to see:
+          </p>
+          <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">The exact location of the vulnerability (lines 21-22)</li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">The severity level (HIGH or CRITICAL)</li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">A description of why this is a security risk</li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Recommended remediation steps</li>
+          </ul>
+
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 3: Ask Bob to Fix the Issue</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Use Bob's AI capabilities to remediate the security issue. You can either:
+          </p>
+
+          <div class="prompt-card">
+            <div class="prompt-card__header">
+              <span class="prompt-card__title">Option A: Use Bob Findings Quick Fix</span>
+            </div>
+            <div class="prompt-body" id="option-a">Right-click on the finding in Bob Findings panel and select "Quick Fix" or "Fix with Bob"</div>
+          </div>
+
+          <div class="prompt-card">
+            <div class="prompt-card__header">
+              <span class="prompt-card__title">Option B: Ask Bob Directly</span>
+              <button class="copy-btn" onclick="copyPrompt(this, 'option-b')">Copy</button>
+            </div>
+            <div class="prompt-body" id="option-b">I see hardcoded API credentials in PaymentService.java (lines 21-22). Please help me:
+1. Remove the hardcoded credentials
+2. Move them to environment variables
+3. Update the code to read from environment variables using Spring's @Value annotation
+4. Create an example .env file with placeholder values</div>
+          </div>
+
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 4: Verify the Fix</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            After Bob applies the fix, verify that:
+          </p>
+          <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">The hardcoded credentials are removed from <code>PaymentService.java</code></li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">The code now uses <code>@Value</code> annotations to inject credentials</li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">An <code>application.properties</code> or <code>.env</code> file is created with placeholder values</li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Bob Findings no longer shows the security alert</li>
+          </ul>
+
+          <div class="callout callout--success">
+            <div class="callout__label">Best Practice</div>
+            <p>Always store sensitive credentials in environment variables or secure vaults (like HashiCorp Vault, AWS Secrets Manager, or Azure Key Vault). Never commit credentials to version control.</p>
+          </div>
+
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 5: Rotate Compromised Credentials</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Since the credentials were exposed in the codebase, you should:
+          </p>
+          <ol style="padding-left: 1.5rem; margin-bottom: 1rem;">
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Generate new API keys from your payment gateway provider</li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Update your environment variables with the new credentials</li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Revoke the old credentials immediately</li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Review git history to ensure credentials are not in version control</li>
+          </ol>
+        </div>
+
+        <!-- USE CASE 2: DEPENDENCY ANALYSIS -->
+        <div class="subsection" id="dependency-analysis">
+          <div class="subsection__header">
+            <h3>Use Case 2: Dependency Vulnerability Analysis</h3>
+          </div>
+          
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            In this exercise, you'll work with an IBM Concert dependency scan report to identify and fix critical vulnerabilities in the payment-app's dependencies. The report (<code>dependency-scan-summary.md</code>) contains detailed information about vulnerable dependencies, CVEs, and remediation steps.
+          </p>
+
+          <div class="callout callout--danger">
+            <div class="callout__label">Critical Vulnerabilities Detected</div>
+            <p>The dependency scan has identified 2 CRITICAL vulnerabilities with active exploits: SnakeYAML 1.30 (CVE-2022-1471, CVSS 9.8) and H2 Database 2.1.214 (CVE-2022-45868, CVSS 7.5). Immediate action required.</p>
+          </div>
+
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 1: Ask Bob to Summarize the Report</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            First, let Bob analyze the IBM Concert report and provide a brief summary of the key findings.
+          </p>
+
+          <div class="prompt-card">
+            <div class="prompt-card__header">
+              <span class="prompt-card__title">Prompt: Summarize Dependency Report</span>
+              <button class="copy-btn" onclick="copyPrompt(this, 'summarize-report')">Copy</button>
+            </div>
+            <div class="prompt-body" id="summarize-report">Please read the dependency-scan-summary.md file and provide a brief summary of:
+1. The overall health score and security posture
+2. The top 3 most critical vulnerabilities that need immediate attention
+3. The total number of vulnerabilities by severity (Critical, High, Medium, Low)
+4. Any hardcoded credentials or security issues found in the code
+
+Keep the summary concise and focused on actionable items.</div>
+          </div>
+
+          <div class="callout callout--info">
+            <div class="callout__label">Expected Output</div>
+            <p>Bob should identify the critical SnakeYAML and H2 Database vulnerabilities, the hardcoded credentials in PaymentService.java, and provide an overview of the security posture (Overall Health Score: 38/100).</p>
+          </div>
+
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 2: Ask Bob to Create a Remediation Plan</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Now ask Bob to create a detailed, step-by-step plan to fix the critical vulnerabilities identified in the report.
+          </p>
+
+          <div class="prompt-card">
+            <div class="prompt-card__header">
+              <span class="prompt-card__title">Prompt: Create Remediation Plan</span>
+              <button class="copy-btn" onclick="copyPrompt(this, 'remediation-plan')">Copy</button>
+            </div>
+            <div class="prompt-body" id="remediation-plan">Based on the dependency-scan-summary.md report, please create a detailed remediation plan to fix the critical vulnerabilities. The plan should include:
+
+1. Priority order (P0 - Critical, P1 - High, P2 - Medium)
+2. Specific files that need to be modified (e.g., pom.xml)
+3. Exact changes required (which lines to remove, what to update)
+4. Validation steps to verify the fixes
+5. Estimated time for each fix
+
+Focus on the EMERGENCY actions first (SnakeYAML and H2 Database vulnerabilities).</div>
+          </div>
+
+          <div class="callout callout--info">
+            <div class="callout__label">Expected Output</div>
+            <p>Bob should create a prioritized plan that includes removing the version overrides for SnakeYAML and H2 from pom.xml, removing hardcoded credentials, and providing validation steps.</p>
+          </div>
+
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 3: Ask Bob to Execute the Fixes</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Now let Bob execute the remediation plan step by step. Bob will modify the necessary files and verify the changes.
+          </p>
+
+          <div class="prompt-card">
+            <div class="prompt-card__header">
+              <span class="prompt-card__title">Prompt: Execute Remediation</span>
+              <button class="copy-btn" onclick="copyPrompt(this, 'execute-fixes')">Copy</button>
+            </div>
+            <div class="prompt-body" id="execute-fixes">Please execute the remediation plan you created. Start with the P0 CRITICAL fixes:
+
+1. Remove the SnakeYAML version override from pom.xml (lines 27 and 87-94)
+2. Remove the H2 Database version override from pom.xml (lines 27 and 45)
+3. Remove hardcoded credentials from PaymentService.java (lines 21-22)
+4. Update PaymentService.java to use @Value annotations for credentials
+5. Create/update application.properties with placeholder values
+
+After each change, show me what was modified and wait for my confirmation before proceeding to the next step.</div>
+          </div>
+
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 4: Verify the Fixes</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            After Bob completes the fixes, verify that the vulnerabilities are resolved.
+          </p>
+
+          <div class="prompt-card">
+            <div class="prompt-card__header">
+              <span class="prompt-card__title">Prompt: Verify Fixes</span>
+              <button class="copy-btn" onclick="copyPrompt(this, 'verify-fixes')">Copy</button>
+            </div>
+            <div class="prompt-body" id="verify-fixes">Please verify that all the critical fixes have been applied correctly:
+
+1. Run `mvn dependency:tree` to check the SnakeYAML and H2 versions
+2. Confirm that no hardcoded credentials remain in the codebase
+3. Verify that the application builds successfully with `mvn clean install`
+4. Check if there are any remaining critical vulnerabilities
+
+Provide a summary of the verification results.</div>
+          </div>
+
+          <div class="callout callout--success">
+            <div class="callout__label">Success Criteria</div>
+            <p>After completing this exercise, you should have:</p>
+            <ul style="padding-left: 1.2rem; margin-top: .5rem;">
+              <li>Removed vulnerable dependency version overrides from pom.xml</li>
+              <li>Eliminated hardcoded credentials from the codebase</li>
+              <li>Verified that Spring Boot manages secure dependency versions</li>
+              <li>Successfully built the application without critical vulnerabilities</li>
+            </ul>
+          </div>
+
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 5: Document the Changes</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Finally, ask Bob to create documentation of the security fixes applied.
+          </p>
+
+          <div class="prompt-card">
+            <div class="prompt-card__header">
+              <span class="prompt-card__title">Prompt: Document Changes</span>
+              <button class="copy-btn" onclick="copyPrompt(this, 'document-changes')">Copy</button>
+            </div>
+            <div class="prompt-body" id="document-changes">Please create a SECURITY-FIXES-APPLIED.md document that includes:
+
+1. Summary of vulnerabilities fixed
+2. List of files modified with specific changes
+3. Before and after dependency versions
+4. Validation steps performed
+5. Recommendations for ongoing security monitoring
+
+Format it as a professional security remediation report.</div>
+          </div>
+        </div>
+
+        <!-- ADDITIONAL TIPS -->
+        <div class="callout callout--info" style="margin-top: 2rem;">
+          <div class="callout__label">Pro Tips</div>
+          <p style="margin-bottom: .5rem;"><strong>Continuous Security Monitoring:</strong></p>
+          <ul style="padding-left: 1.2rem; margin-bottom: .75rem;">
+            <li>Enable Bob Findings to run automatically on every code change</li>
+            <li>Integrate dependency scanning into your CI/CD pipeline</li>
+            <li>Schedule regular security audits with IBM Concert</li>
+            <li>Use tools like OWASP Dependency-Check or Snyk for continuous monitoring</li>
+          </ul>
+          <p style="margin-bottom: .5rem;"><strong>Best Practices:</strong></p>
+          <ul style="padding-left: 1.2rem;">
+            <li>Never commit credentials to version control</li>
+            <li>Keep dependencies up to date with the latest security patches</li>
+            <li>Review and act on security findings immediately</li>
+            <li>Document all security fixes for audit trails</li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Menu toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+      const isOpen = sidebar.classList.contains('open');
+      menuToggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    // Copy prompt functionality
+    function copyPrompt(button, elementId) {
+      const promptBody = document.getElementById(elementId);
+      const text = promptBody.textContent;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        button.textContent = 'Copied!';
+        button.classList.add('copied');
+        
+        setTimeout(() => {
+          button.textContent = 'Copy';
+          button.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    }
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+          
+          // Update active state
+          document.querySelectorAll('.sidebar__link, .sidebar__sublink').forEach(link => {
+            link.classList.remove('active');
+          });
+          this.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

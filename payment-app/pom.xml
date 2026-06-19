@@ -23,9 +23,9 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Vulnerable versions for testing -->
-        <snakeyaml.version>1.30</snakeyaml.version>
-        <h2.version>2.1.214</h2.version>
+        <!-- Security: Override Spring Boot's managed versions with secure versions -->
+        <snakeyaml.version>2.0</snakeyaml.version>
+        <h2.version>2.2.224</h2.version>
     </properties>
 
     <dependencies>
@@ -45,7 +45,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>${h2.version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -86,17 +85,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- Force vulnerable SnakeYAML version -->
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>${snakeyaml.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <plugins>
