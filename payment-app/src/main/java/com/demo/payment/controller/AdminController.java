@@ -18,10 +18,6 @@ public class AdminController {
     // Test hardcoded secrets for security scanning
     //-------------------------------------------------------------------
     //-------------------------------------------------------------------
-    private String stripeApiKey = "sk_live_51H7xYzAbCdEfGhIjKlMnOpQrStUvWxYz";
-    private String awsAccessKey = "AKIAIOSFODNN7EXAMPLE";
-    private String awsSecretKey = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY";
-    private String githubToken = "ghp_1234567890abcdefghijklmnopqrstuvwxyz";
     //-------------------------------------------------------------------
     //-------------------------------------------------------------------
     @Value("${admin.api.key:}")
