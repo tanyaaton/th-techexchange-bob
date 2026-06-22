@@ -510,9 +510,69 @@
             In this exercise, you'll use Bob's built-in security scanning capabilities to identify leaked API keys and credentials in the payment-app codebase. Bob Findings provides real-time security analysis and helps you remediate issues quickly.
           </p>
 
+          <div class="callout callout--warning">
+            <div class="callout__label">Lab Setup Required</div>
+            <p>To test Bob's security finding capabilities, you'll first need to add hardcoded API keys to the codebase. Follow the instructions below to introduce test vulnerabilities.</p>
+          </div>
+
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 0: Add Hardcoded API Keys for Testing</h4>
+          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+            Before testing Bob's security scanning, add hardcoded API keys to <code>AdminController.java</code> to simulate a real security vulnerability.
+          </p>
+
+          <div class="callout callout--info">
+            <div class="callout__label">Instructions</div>
+            <p style="margin-bottom: .75rem;">Add the following hardcoded API keys as private fields in <code>AdminController.java</code> after line 17 (after the <code>cacheService</code> declaration):</p>
+          </div>
+
+          <div class="prompt-card">
+            <div class="prompt-card__header">
+              <span class="prompt-card__title">Code to Add to AdminController.java</span>
+              <button class="copy-btn" onclick="copyPrompt(this, 'hardcoded-keys')">Copy</button>
+            </div>
+            <div class="prompt-body" id="hardcoded-keys">// Test hardcoded secrets for security scanning
+private String stripeApiKey = "sk_live_51H7xYzAbCdEfGhIjKlMnOpQrStUvWxYz";
+private String awsAccessKey = "AKIAIOSFODNN7EXAMPLE";
+private String awsSecretKey = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY";
+private String githubToken = "ghp_1234567890abcdefghijklmnopqrstuvwxyz";</div>
+          </div>
+
+          <p style="color: var(--text-secondary); margin: 1rem 0;">
+            <strong>Location:</strong> Insert these lines in <code>payment-app/src/main/java/com/demo/payment/controller/AdminController.java</code> after line 17, before the <code>@Value</code> annotation.
+          </p>
+
+          <div class="mini-card" style="margin: 1rem 0;">
+            <h4>Complete Section Will Look Like:</h4>
+            <pre style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; background: #f6f8fa; padding: .5rem; border-radius: 3px; overflow-x: auto;">private final CacheService cacheService;
+
+// Test hardcoded secrets for security scanning
+private String stripeApiKey = "sk_live_...";
+private String awsAccessKey = "AKIAIOSFODNN7...";
+private String awsSecretKey = "wJalrXUtnFEMI...";
+private String githubToken = "ghp_1234567890...";
+
+// SECURITY FIX: Admin API key loaded from environment
+@Value("${admin.api.key:}")
+private String adminApiKey;</pre>
+          </div>
+
+          <div style="margin: 1.5rem 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div>
+                <h5 style="font-size: 13px; font-weight: 600; margin-bottom: .5rem; color: var(--text-primary);">Before</h5>
+                <img src="image/before.png" alt="AdminController.java before adding hardcoded API keys" style="max-width: 100%; height: auto; border: 1px solid var(--border-color); border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              </div>
+              <div>
+                <h5 style="font-size: 13px; font-weight: 600; margin-bottom: .5rem; color: var(--text-primary);">After</h5>
+                <img src="image/after.png" alt="AdminController.java after adding hardcoded API keys" style="max-width: 100%; height: auto; border: 1px solid var(--border-color); border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              </div>
+            </div>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-top: .75rem; font-style: italic; text-align: center;">Visual guide: AdminController.java before and after adding hardcoded API keys for testing</p>
+          </div>
+
           <div class="callout callout--danger">
-            <div class="callout__label">Security Alert</div>
-            <p>The payment-app contains hardcoded API credentials in <code>PaymentService.java</code>. This is a critical security vulnerability that must be addressed immediately.</p>
+            <div class="callout__label">Important</div>
+            <p><strong>Remember to remove these test secrets after completing the lab!</strong> These are realistic API key patterns used for testing Bob's detection capabilities. Never commit real credentials to version control.</p>
           </div>
 
           <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 1: Open Bob Findings</h4>
@@ -526,18 +586,7 @@
             <li style="color: var(--text-secondary); margin-bottom: .5rem;">Look for findings related to "Hardcoded Credentials" or "Leaked API Keys"</li>
           </ol>
 
-          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 2: Review the Security Finding</h4>
-          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-            Bob Findings will identify the hardcoded credentials in <code>PaymentService.java</code>. Click on the finding to see:
-          </p>
-          <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
-            <li style="color: var(--text-secondary); margin-bottom: .5rem;">The exact location of the vulnerability (lines 21-22)</li>
-            <li style="color: var(--text-secondary); margin-bottom: .5rem;">The severity level (HIGH or CRITICAL)</li>
-            <li style="color: var(--text-secondary); margin-bottom: .5rem;">A description of why this is a security risk</li>
-            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Recommended remediation steps</li>
-          </ul>
-
-          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 3: Ask Bob to Fix the Issue</h4>
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 2: Ask Bob to Fix the Issue</h4>
           <p style="color: var(--text-secondary); margin-bottom: 1rem;">
             Use Bob's AI capabilities to remediate the security issue. You can either:
           </p>
@@ -554,19 +603,19 @@
               <span class="prompt-card__title">Option B: Ask Bob Directly</span>
               <button class="copy-btn" onclick="copyPrompt(this, 'option-b')">Copy</button>
             </div>
-            <div class="prompt-body" id="option-b">I see hardcoded API credentials in PaymentService.java (lines 21-22). Please help me:
-1. Remove the hardcoded credentials
+            <div class="prompt-body" id="option-b">I see hardcoded API credentials in AdminController.java. Please help me:
+1. Remove the hardcoded credentials (stripeApiKey, awsAccessKey, awsSecretKey, githubToken)
 2. Move them to environment variables
 3. Update the code to read from environment variables using Spring's @Value annotation
-4. Create an example .env file with placeholder values</div>
+4. Create/update application.properties with placeholder values</div>
           </div>
 
-          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 4: Verify the Fix</h4>
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 3: Verify the Fix</h4>
           <p style="color: var(--text-secondary); margin-bottom: 1rem;">
             After Bob applies the fix, verify that:
           </p>
           <ul style="padding-left: 1.5rem; margin-bottom: 1rem;">
-            <li style="color: var(--text-secondary); margin-bottom: .5rem;">The hardcoded credentials are removed from <code>PaymentService.java</code></li>
+            <li style="color: var(--text-secondary); margin-bottom: .5rem;">The hardcoded credentials are removed from <code>AdminController.java</code></li>
             <li style="color: var(--text-secondary); margin-bottom: .5rem;">The code now uses <code>@Value</code> annotations to inject credentials</li>
             <li style="color: var(--text-secondary); margin-bottom: .5rem;">An <code>application.properties</code> or <code>.env</code> file is created with placeholder values</li>
             <li style="color: var(--text-secondary); margin-bottom: .5rem;">Bob Findings no longer shows the security alert</li>
@@ -577,7 +626,7 @@
             <p>Always store sensitive credentials in environment variables or secure vaults (like HashiCorp Vault, AWS Secrets Manager, or Azure Key Vault). Never commit credentials to version control.</p>
           </div>
 
-          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 5: Rotate Compromised Credentials</h4>
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 4: Rotate Compromised Credentials</h4>
           <p style="color: var(--text-secondary); margin-bottom: 1rem;">
             Since the credentials were exposed in the codebase, you should:
           </p>

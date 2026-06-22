@@ -15,8 +15,15 @@ import java.util.Map;
 public class AdminController {
 
     private final CacheService cacheService;
-    
-    // SECURITY FIX: Admin API key loaded from environment variables
+    // Test hardcoded secrets for security scanning
+    //-------------------------------------------------------------------
+    //-------------------------------------------------------------------
+    private String stripeApiKey = "sk_live_51H7xYzAbCdEfGhIjKlMnOpQrStUvWxYz";
+    private String awsAccessKey = "AKIAIOSFODNN7EXAMPLE";
+    private String awsSecretKey = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY";
+    private String githubToken = "ghp_1234567890abcdefghijklmnopqrstuvwxyz";
+    //-------------------------------------------------------------------
+    //-------------------------------------------------------------------
     @Value("${admin.api.key:}")
     private String adminApiKey;
 
