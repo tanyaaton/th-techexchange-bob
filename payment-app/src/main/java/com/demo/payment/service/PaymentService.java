@@ -2,6 +2,7 @@ package com.demo.payment.service;
 
 import com.demo.payment.model.*;
 import com.demo.payment.repository.TransactionRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,9 +19,12 @@ public class PaymentService {
     private final TransactionRepository transactionRepository;
     private final Random random = new Random();
     
-    // SECURITY ISSUE: Hardcoded API credentials - should be in environment variables
-    private static final String PAYMENT_GATEWAY_API_KEY = "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";
-    private static final String PAYMENT_GATEWAY_SECRET = "whsec_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6";
+    // SECURITY FIX: API credentials loaded from environment variables
+    @Value("${payment.gateway.api.key:}")
+    private String paymentGatewayApiKey;
+    
+    @Value("${payment.gateway.secret:}")
+    private String paymentGatewaySecret;
 
     // Test card numbers that always approve
     private static final List<String> TEST_CARDS = Arrays.asList(
