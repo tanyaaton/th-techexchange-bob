@@ -16,6 +16,8 @@ public class AdminController {
 
     public AdminController(CacheService cacheService) {
         this.cacheService = cacheService;
+    // SECURITY ISSUE: Hardcoded admin API key - should be in environment variables
+    private static final String ADMIN_API_KEY = "admin_key_9f8e7d6c5b4a3210fedcba9876543210";
     }
 
     @PostMapping("/cache/clear")
