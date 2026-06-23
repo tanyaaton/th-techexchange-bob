@@ -56,6 +56,37 @@
       --text: #161616;
     }
 
+    /* ── COLLAPSIBLE TOGGLE ── */
+    .collapsible-header {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      user-select: none;
+      transition: color 0.2s;
+    }
+    .collapsible-header:hover {
+      color: var(--primary-color);
+    }
+    .collapsible-header::before {
+      content: '▶';
+      font-size: 12px;
+      transition: transform 0.2s;
+      display: inline-block;
+    }
+    .collapsible-header.active::before {
+      transform: rotate(90deg);
+    }
+    .collapsible-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+    .collapsible-content.active {
+      max-height: 2000px;
+      transition: max-height 0.5s ease-in;
+    }
+
     body {
       font-family: 'IBM Plex Sans', sans-serif;
       font-size: 14px;
@@ -274,7 +305,7 @@
       display: flex; align-items: center; gap: .5rem;
       margin-bottom: 1rem; flex-wrap: wrap;
     }
-    .subsection__header h3 { font-size: 1.25rem; font-weight: 600; }
+    .subsection__header h3 { font-size: 1.75rem; font-weight: 600; }
 
     /* ── HERO ── */
     .hero { padding-top: 1rem; }
@@ -541,20 +572,6 @@ private String githubToken = "ghp_1234567890abcdefghijklmnopqrstuvwxyz";</div>
             <strong>Location:</strong> Insert these lines in <code>payment-app/src/main/java/com/demo/payment/controller/AdminController.java</code> after line 17, before the <code>@Value</code> annotation.
           </p>
 
-          <div class="mini-card" style="margin: 1rem 0;">
-            <h4>Complete Section Will Look Like:</h4>
-            <pre style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; background: #f6f8fa; padding: .5rem; border-radius: 3px; overflow-x: auto;">private final CacheService cacheService;
-
-// Test hardcoded secrets for security scanning
-private String stripeApiKey = "sk_live_...";
-private String awsAccessKey = "AKIAIOSFODNN7...";
-private String awsSecretKey = "wJalrXUtnFEMI...";
-private String githubToken = "ghp_1234567890...";
-
-// SECURITY FIX: Admin API key loaded from environment
-@Value("${admin.api.key:}")
-private String adminApiKey;</pre>
-          </div>
 
           <div style="margin: 1.5rem 0;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
@@ -575,42 +592,20 @@ private String adminApiKey;</pre>
             <p><strong>Remember to remove these test secrets after completing the lab!</strong> These are realistic API key patterns used for testing Bob's detection capabilities. Never commit real credentials to version control.</p>
           </div>
 
-          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 1: Open Bob Findings</h4>
-          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-            Bob Findings automatically scans your codebase for security issues. To access it:
-          </p>
-          <ol style="padding-left: 1.5rem; margin-bottom: 1rem;">
-            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Open the payment-app project in Bob IDE</li>
-            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Look for the "Findings" panel (usually in the left sidebar or bottom panel)</li>
-            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Bob will automatically scan the codebase and display security findings</li>
-            <li style="color: var(--text-secondary); margin-bottom: .5rem;">Look for findings related to "Hardcoded Credentials" or "Leaked API Keys"</li>
-          </ol>
-
-          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 2: Ask Bob to Fix the Issue</h4>
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 1: Ask Bob to Fix the Issue</h4>
           <p style="color: var(--text-secondary); margin-bottom: 1rem;">
             Use Bob's AI capabilities to remediate the security issue. You can either:
           </p>
 
           <div class="prompt-card">
             <div class="prompt-card__header">
-              <span class="prompt-card__title">Option A: Use Bob Findings Quick Fix</span>
-            </div>
-            <div class="prompt-body" id="option-a">Right-click on the finding in Bob Findings panel and select "Quick Fix" or "Fix with Bob"</div>
-          </div>
-
-          <div class="prompt-card">
-            <div class="prompt-card__header">
-              <span class="prompt-card__title">Option B: Ask Bob Directly</span>
+              <span class="prompt-card__title">Ask Bob Directly</span>
               <button class="copy-btn" onclick="copyPrompt(this, 'option-b')">Copy</button>
             </div>
-            <div class="prompt-body" id="option-b">I see hardcoded API credentials in AdminController.java. Please help me:
-1. Remove the hardcoded credentials (stripeApiKey, awsAccessKey, awsSecretKey, githubToken)
-2. Move them to environment variables
-3. Update the code to read from environment variables using Spring's @Value annotation
-4. Create/update application.properties with placeholder values</div>
+            <div class="prompt-body" id="option-b">Remove the hardcoded API credentials from AdminController.java and move them to environment variables using Spring's @Value annotation.</div>
           </div>
 
-          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 3: Verify the Fix</h4>
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 2: Verify the Fix</h4>
           <p style="color: var(--text-secondary); margin-bottom: 1rem;">
             After Bob applies the fix, verify that:
           </p>
@@ -626,7 +621,7 @@ private String adminApiKey;</pre>
             <p>Always store sensitive credentials in environment variables or secure vaults (like HashiCorp Vault, AWS Secrets Manager, or Azure Key Vault). Never commit credentials to version control.</p>
           </div>
 
-          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 4: Rotate Compromised Credentials</h4>
+          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 3: Rotate Compromised Credentials</h4>
           <p style="color: var(--text-secondary); margin-bottom: 1rem;">
             Since the credentials were exposed in the codebase, you should:
           </p>
@@ -724,17 +719,18 @@ Focus on the EMERGENCY actions first (SnakeYAML and H2 Database vulnerabilities)
 After each change, show me what was modified and wait for my confirmation before proceeding to the next step.</div>
           </div>
 
-          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 4: Verify the Fixes</h4>
-          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-            After Bob completes the fixes, verify that the vulnerabilities are resolved.
-          </p>
+          <h4 class="collapsible-header" onclick="toggleCollapsible(this)" style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 4: Verify the Fixes (optional)</h4>
+          <div class="collapsible-content">
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+              After Bob completes the fixes, verify that the vulnerabilities are resolved.
+            </p>
 
-          <div class="prompt-card">
-            <div class="prompt-card__header">
-              <span class="prompt-card__title">Prompt: Verify Fixes</span>
-              <button class="copy-btn" onclick="copyPrompt(this, 'verify-fixes')">Copy</button>
-            </div>
-            <div class="prompt-body" id="verify-fixes">Please verify that all the critical fixes have been applied correctly:
+            <div class="prompt-card">
+              <div class="prompt-card__header">
+                <span class="prompt-card__title">Prompt: Verify Fixes</span>
+                <button class="copy-btn" onclick="copyPrompt(this, 'verify-fixes')">Copy</button>
+              </div>
+              <div class="prompt-body" id="verify-fixes">Please verify that all the critical fixes have been applied correctly:
 
 1. Run `mvn dependency:tree` to check the SnakeYAML and H2 versions
 2. Confirm that no hardcoded credentials remain in the codebase
@@ -742,30 +738,32 @@ After each change, show me what was modified and wait for my confirmation before
 4. Check if there are any remaining critical vulnerabilities
 
 Provide a summary of the verification results.</div>
-          </div>
-
-          <div class="callout callout--success">
-            <div class="callout__label">Success Criteria</div>
-            <p>After completing this exercise, you should have:</p>
-            <ul style="padding-left: 1.2rem; margin-top: .5rem;">
-              <li>Removed vulnerable dependency version overrides from pom.xml</li>
-              <li>Eliminated hardcoded credentials from the codebase</li>
-              <li>Verified that Spring Boot manages secure dependency versions</li>
-              <li>Successfully built the application without critical vulnerabilities</li>
-            </ul>
-          </div>
-
-          <h4 style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 5: Document the Changes</h4>
-          <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-            Finally, ask Bob to create documentation of the security fixes applied.
-          </p>
-
-          <div class="prompt-card">
-            <div class="prompt-card__header">
-              <span class="prompt-card__title">Prompt: Document Changes</span>
-              <button class="copy-btn" onclick="copyPrompt(this, 'document-changes')">Copy</button>
             </div>
-            <div class="prompt-body" id="document-changes">Please create a SECURITY-FIXES-APPLIED.md document that includes:
+
+            <div class="callout callout--success">
+              <div class="callout__label">Success Criteria</div>
+              <p>After completing this exercise, you should have:</p>
+              <ul style="padding-left: 1.2rem; margin-top: .5rem;">
+                <li>Removed vulnerable dependency version overrides from pom.xml</li>
+                <li>Eliminated hardcoded credentials from the codebase</li>
+                <li>Verified that Spring Boot manages secure dependency versions</li>
+                <li>Successfully built the application without critical vulnerabilities</li>
+              </ul>
+            </div>
+          </div>
+
+          <h4 class="collapsible-header" onclick="toggleCollapsible(this)" style="font-size: 14px; font-weight: 600; margin: 1.5rem 0 .75rem;">Step 5: Document the Changes (optional)</h4>
+          <div class="collapsible-content">
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+              Finally, ask Bob to create documentation of the security fixes applied.
+            </p>
+
+            <div class="prompt-card">
+              <div class="prompt-card__header">
+                <span class="prompt-card__title">Prompt: Document Changes</span>
+                <button class="copy-btn" onclick="copyPrompt(this, 'document-changes')">Copy</button>
+              </div>
+              <div class="prompt-body" id="document-changes">Please create a SECURITY-FIXES-APPLIED.md document that includes:
 
 1. Summary of vulnerabilities fixed
 2. List of files modified with specific changes
@@ -774,6 +772,7 @@ Provide a summary of the verification results.</div>
 5. Recommendations for ongoing security monitoring
 
 Format it as a professional security remediation report.</div>
+            </div>
           </div>
         </div>
 
@@ -827,6 +826,13 @@ Format it as a professional security remediation report.</div>
       }).catch(err => {
         console.error('Failed to copy text: ', err);
       });
+    }
+
+    // Toggle collapsible sections
+    function toggleCollapsible(element) {
+      element.classList.toggle('active');
+      const content = element.nextElementSibling;
+      content.classList.toggle('active');
     }
 
     // Smooth scrolling for anchor links
