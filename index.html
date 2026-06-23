@@ -440,27 +440,6 @@
 
         <div class="download-card" style="background: #f0f8f1; border-color: #a7d5b8;">
           <div>
-            <h3>IBM ID Registration</h3>
-            <p>Create your IBM ID to access IBM products and services, including Bob.</p>
-          </div>
-          <a href="https://www.ibm.com/account/reg/us-en/signup?formid=urx-19776"
-             target="_blank"
-             rel="noopener noreferrer"
-             aria-label="Register for IBM ID"
-             style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #198038; color: white; text-decoration: none; border-radius: 4px; font-weight: 500; transition: background 0.2s; white-space: nowrap;"
-             onmouseover="this.style.background='#0e6027'"
-             onmouseout="this.style.background='#198038'">
-            Register IBM ID
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-          </a>
-        </div>
-
-        <div class="download-card" style="background: #eaf0ff; border-color: #b3c8fd; margin-top: 1rem;">
-          <div>
             <h3>Bob Trial Access</h3>
             <p>Sign up for IBM Bob trial to access the AI-powered development assistant and security scanning features.</p>
           </div>
@@ -468,9 +447,9 @@
              target="_blank"
              rel="noopener noreferrer"
              aria-label="Sign up for Bob Trial"
-             style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #0f62fe; color: white; text-decoration: none; border-radius: 4px; font-weight: 500; transition: background 0.2s; white-space: nowrap;"
-             onmouseover="this.style.background='#0353e9'"
-             onmouseout="this.style.background='#0f62fe'">
+             style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #198038; color: white; text-decoration: none; border-radius: 4px; font-weight: 500; transition: background 0.2s; white-space: nowrap;"
+             onmouseover="this.style.background='#0e6027'"
+             onmouseout="this.style.background='#198038'">
             Start Bob Trial
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -480,9 +459,37 @@
           </a>
         </div>
 
+        <div style="margin-top: 1rem;">
+          <h4 class="collapsible-header" onclick="toggleCollapsible(this)" style="font-size: 14px; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-secondary);">
+            If trial link doesn't work, register IBM ID first (click to expand)
+          </h4>
+          <div class="collapsible-content">
+            <div class="download-card" style="background: #eaf0ff; border-color: #b3c8fd; margin-top: 0.5rem;">
+              <div>
+                <h3>IBM ID Registration</h3>
+                <p>Create your IBM ID to access IBM products and services, including Bob.</p>
+              </div>
+              <a href="https://www.ibm.com/account/reg/us-en/signup?formid=urx-19776"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 aria-label="Register for IBM ID"
+                 style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: #0f62fe; color: white; text-decoration: none; border-radius: 4px; font-weight: 500; transition: background 0.2s; white-space: nowrap;"
+                 onmouseover="this.style.background='#0353e9'"
+                 onmouseout="this.style.background='#0f62fe'">
+                Register IBM ID
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
         <div class="callout callout--info" style="margin-top: 1rem;">
           <div class="callout__label">Note</div>
-          <p>You must complete both registrations before proceeding with the lab exercises. The Bob trial provides access to all features needed for this security and dependency analysis walkthrough.</p>
+          <p>Start with the Bob Trial link above. If you encounter any issues, expand the IBM ID Registration section as a fallback option.</p>
         </div>
 
         <!-- Prerequisites Subsection -->
