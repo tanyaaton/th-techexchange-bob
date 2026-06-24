@@ -494,11 +494,11 @@
 
         <!-- Prerequisites Subsection -->
         <div style="margin-top: 3rem;">
-          <h3 id="prerequisites" style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">Prerequisites</h3>
-          <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
-            Before starting the lab, make sure your workstation has Java, Maven, and Bob IDE ready. The included shell and batch scripts simplify the installation and user-level environment setup.
-          </p>
-        </div>
+          <h3 id="prerequisites" class="collapsible-header" onclick="toggleCollapsible(this)" style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem;">Prerequisites (optional)</h3>
+          <div class="collapsible-content">
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+              Before starting the lab, make sure your workstation has Java, Maven, and Bob IDE ready. The included shell and batch scripts simplify the installation and user-level environment setup.
+            </p>
 
         <div class="mini-grid">
           <div class="mini-card">
@@ -525,6 +525,8 @@
         <div class="callout callout--info" style="margin-top: 1rem;">
           <div class="callout__label">Note</div>
           <p>The setup scripts will install Java 17 and Maven 3.9+ in your user directory without requiring administrator privileges. After installation, restart your terminal or IDE to ensure the environment variables are loaded.</p>
+        </div>
+          </div>
         </div>
       </section>
 
